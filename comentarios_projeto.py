@@ -93,3 +93,6 @@
 # baseado na utilização das regras. Após isso, deve-se verificar se o diagnóstico bate com
 # o diagnóstico do arquivo.
 
+
+#-------------------------ALTERAÇÕES DO REPOSITÓRIO SEMANA 01-------------------------------
+
