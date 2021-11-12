@@ -96,3 +96,13 @@
 
 #-------------------------ALTERAÇÕES DO REPOSITÓRIO SEMANA 01-------------------------------
 
+"""
+- Inserção de metas para serem cumpridas durante a semana no READ ME
+- Inserção de arquivos necessários que o professor disponibilizou para o projeto prático da etapa 1, não inserindo os arquivos que se tratam logica proposicional de primeira ordem
+- Conclusão de algumas funções
+- Consertar Função: significa que a mesma esta funcionando, mas não em todos os casos necessários
+- Implementar Função: significa que a mesma não esta funcionando ou nem foi iniciada
+
+- Foco em utilizar os conceitos de equivalencia lógica para transformar as formulas em fórmulas que só possuam a negação e o operador binário AND
+para que facilite a detecção de satisfabilidade
+"""
