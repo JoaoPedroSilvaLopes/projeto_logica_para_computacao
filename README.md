@@ -17,9 +17,9 @@ __METAS__
 - [x] Ajeitar a função is_clause(formula)
 - [x] Ajeitar a função is_negation_normal_form(formula)
 - [x] Ajeitar a função is_cnf(formula)
-- [ ] Ajeitar a função is_term(formula)
+- [x] Ajeitar a função is_term(formula)
 - [x] Implementar função substitution(formula, old_subformula, new_subformula)
-- [ ] Implementar função is_dnf(formula)
+- [x] Implementar função is_dnf(formula)
 - [ ] Implementar função is_decomposable_negation_normal_form(formula)
 
 
