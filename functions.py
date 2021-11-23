@@ -216,18 +216,66 @@ def is_cnf(formula):
 
 # VERIFICAR SE A FORMULA É UM TERMO
 def is_term(formula):
-    
-    if isinstance(formula, And) and (is_literal(formula.left) and is_literal(formula.right)): # Se existir uma conjunção entre literais
-        return True
+    termo = True
+
+    if isinstance(formula, And): # verifica se é uma conjunção de literais
+
+        if isinstance(formula.right and formula.left, Atom):# caso sejam atômicas
+            termo = termo and is_literal(formula.right) and is_literal(formula.left)# guarda o valor true ou false na variavel termo, só será termo se as duas forem
+            return termo# retorna o termo
+
+        if isinstance(formula.right or formula.left, Not):# caso exista uma NOT, já chama a função is_literal
+            termo = termo and is_literal(formula.left)  and is_literal(formula.right)# guarda o valor true ou false na variavel termo, só será termo se as duas forem
+            return termo# retorna o termo
+
+        if isinstance(formula.left and formula.right, And):# caso exista uma encadeado de AND, nos dois lados da formula
+            is_term(formula.right)# chama a função recursivamente
+            is_term(formula.left)# chama a função recursivamente
+        
+        elif isinstance(formula.left or formula.right, And):# caso exista uma encadeado de AND, em um dos lados da formula
+            if isinstance(formula.left, And):
+                is_term(formula.left)# chama a função recursivamente
+                termo = termo and is_literal(formula.right)# guarda o valor de um dos lados em termo
+            else:
+                is_term(formula.right)# chama a função recursivamente
+                termo = termo and is_literal(formula.left)# guarda o valor de um dos lados em termo
+
+        return termo# retorna o termo
         
     else: # Se não satisfazer a exigencia acima
-        return False
+        termo = False# termo recebe o valor false
+        return termo# retorna o termo
 
 
 def is_dnf(formula):
-    """Returns True if formula is in disjunctive normal form.
-    Returns False, otherwise."""
-    pass  # ======== REMOVE THIS LINE AND INSERT YOUR CODE HERE ========
+    termo = True
+
+    if isinstance(formula, Or):# verifica se a formula é uma disjunção 
+
+        if isinstance(formula.right or formula.left, Not):# caso exista um NOT, chama a função is_termo para verificação
+            termo = termo and is_term(formula.left)  and is_term(formula.right)# guarda o valor em termo
+            return termo# retorna termo
+
+        if isinstance(formula.left and formula.right, Or):# caso exista um encadeado de OR, nos dois lados
+            is_dnf(formula.right)# chama a função recursivamente
+            is_dnf(formula.left)# chama a função recursivamente
+
+        elif isinstance(formula.left or formula.right, Or):# caso exista um encadeado de OR, em um dos lados
+            if isinstance(formula.left, Or):
+                is_dnf(formula.left)# chama a função recursivamente
+                termo = termo and is_term(formula.right)# guarda o valor em termo
+            else:
+                is_dnf(formula.right)# chama a função recursivamente
+                termo = termo and is_term(formula.left)# guarda o valor em termo
+        else:
+            termo = termo and is_term(formula.right) and is_term(formula.left)# se não se encaixar em nenhuma das situações anteriores, a função is_term é chamada
+            return termo# retorna termo
+
+        return termo# retorna termo
+
+    else: # Se não satisfazer a exigencia acima
+        termo = False# termo recebe false
+        return termo# retorna termo
 
 
 def is_decomposable_negation_normal_form(formula):

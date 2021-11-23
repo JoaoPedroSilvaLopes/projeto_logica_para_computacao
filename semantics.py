@@ -4,13 +4,38 @@
 from formula import *
 from functions import atoms
 
-
+   
 def truth_value(formula, interpretation):
-    """Determines the truth value of a formula in an interpretation (valuation).
-    An interpretation may be defined as dictionary. For example, {'p': True, 'q': False}.
-    """
-    pass
-    # ======== YOUR CODE HERE ========
+    
+    if isinstance(formula, Atom): # Verificar se a fórmula é uma atomica
+        for formulaArray in interpretation: # Percorrer o array de interpretações parciais
+            if f'{formula}' == f'{formulaArray[0]}': # Se tal atomica estiver na interpretação
+                return formulaArray[1] # Retornar a sua interpretação parcial
+
+    elif isinstance(formula, Not):
+        if truth_value(formula.inner, interpretation) == True or truth_value(formula.inner, interpretation) == False:
+            return not truth_value(formula.inner, interpretation)
+        
+    elif isinstance(formula, And):
+        if truth_value(formula.left, interpretation) == False or truth_value(formula.right, interpretation) == False:
+            return False
+        
+        else:
+            return True
+  
+    elif isinstance(formula, Or):
+        if truth_value(formula.left, interpretation) == True or truth_value(formula.right, interpretation) == True:
+            return True
+        
+        else:
+            return False
+ 
+    elif isinstance(formula, Implies): # Verificar se a fórmula possui o operador binário Implies
+        if truth_value(formula.left, interpretation) == False or truth_value(formula.right, interpretation) == True:
+            return True
+        
+        else:
+            return False
 
 
 def is_logical_consequence(premises, conclusion):  # function TT-Entails? in the book AIMA.
@@ -32,9 +57,9 @@ def is_valid(formula):
 
 
 def satisfiability_brute_force(formula):
-    """Checks whether formula is satisfiable.
-    In other words, if the input formula is satisfiable, it returns an interpretation that assigns true to the formula.
-    Otherwise, it returns False."""
+    """Verifica se a fórmula é satisfatória.
+    Em outras palavras, se a fórmula de entrada for satisfatória, ela retornará uma interpretação que atribui verdadeiro à fórmula.
+    Caso contrário, retorna False. """
     pass
     # ======== YOUR CODE HERE ========
 
@@ -90,138 +115,70 @@ def sat(formula, list_atoms, interpretation):
 # VERIFICAR A VALIDADE
 def validity_checking(formula):
     
-    # Se a fórmula não for safisfatível, logo a fórmula é válida
-    if satisfiability_checking(Not(formula)) == False:
-        # A fórmula é válida
-        return True
+    if satisfiability_checking(Not(formula)) == False: # Se a fórmula não for safisfatível, logo a fórmula é válida
+        return True # A fórmula é válida
     
-    # Caso seja True
-    else:
-        # A fórmula não é válida
-        return False
-
+    else: # Caso seja True
+        return False # A fórmula não é válida
 
 #---------------------------------------------------------------
+# TESTES
+# Função para converter todas os operadores das forulas em And utilizando os conceitos da equivalencia lógica
 
-# Função para converter todas os operadores das formulas em And utilizando os conceitos da equivalencia lógica
-
-def converterOu(formula):  
-    formula = Not(And(Not(formula.left), Not(formula.right)))
-    formulaNegada = formula.inner   
-    
-    if isinstance(formulaNegada.left.inner, Not) and isinstance(formulaNegada.right.inner, Not):
-        formula = Not(And(formulaNegada.left.inner.inner, formulaNegada.right.inner.inner))
-        return formula
-        
-    elif isinstance(formulaNegada.left.inner, Not):
-        formula = Not(And(formulaNegada.left.inner.inner, Not(formulaNegada.right.inner)))
-        return formula
-    
-    elif isinstance(formulaNegada.right.inner, Not):
-        formula = Not(And(Not(formulaNegada.left.inner), formulaNegada.right.inner.inner))
-        return formula
-    
-    else:
-        return formula
- 
-       
-def converterImplica(formula):
-    formula = Or(Not(formula.left), formula.right)
-    return converterOu(formula)
-
-"""def converterNot(formula: Not):
-    if isinstance(formula.inner, Not):
-        formulaNegada = formula.inner
-        formula = formulaNegada.inner
-        #print(formula)
-    
-        if isinstance(formula, And):
-            print(formula.left)
-            
-        formulaNegada = formula.inner
-        formula = formulaNegada.inner
-            
-        if isinstance(formula, Atom):
-            return formula
-            
-        if isinstance(formula, And):
-            print(formula)
-            return formula
-            
-        elif isinstance(formula, And):
-            converterFormula(formula.left)
-            converterFormula(formula.right)
-                
-        elif isinstance(formula, Or):
-            converterOu(formula)
-                
-        elif isinstance(formula, Implies):
-            converterImplica(formula)
-                
-        else:
-            if isinstance(formula.inner, And):
-                converterFormula(formula.inner.left)
-                converterFormula(formula.inner.right)
-                
-            elif isinstance(formula.inner, Or):
-                converterOu(formula.inner)
-                
-            elif isinstance(formula.inner, Implies):
-                converterImplica(formula.inner)"""
-
-def converterFormula(formula):
+def conversor(formula):
     
     if isinstance(formula, Atom):
         return formula
     
     elif isinstance(formula, Not):
-        print(formula)
+        if isinstance(formula.inner, Atom):
+            return formula
         
-        if isinstance(formula.inner, And):
-            
-            converterFormula(formula)
-            print(Not(converterFormula(formula)))
-            
-        elif isinstance(formula.inner, Implies):
-            print(formula.inner)
-        
-    # E       
+        else:
+            formula = conversor(formula.inner)
+            return formula
+    
     elif isinstance(formula, And):
-        f1 = converterFormula(formula.left)
-        f2 = converterFormula(formula.right)
-        formulaE = And(f1, f2)
-        print(formulaE)
-        
-        #return formulaE
-            
-    # OU       
+        formula = And(conversor(formula.left), conversor(formula.right))
+    
     elif isinstance(formula, Or):
-        print(formula)
-        formulaO = converterOu(formula)
-        return formulaO
-            
-    # IMPLICA        
+        formula = Not(And(Not(conversor(formula.left)), Not(conversor(formula.right))))
+
     elif isinstance(formula, Implies):
-        print(formula)
-        formulaI = converterImplica(formula)
-        print(formulaI)
-        return formulaI
-                
+        formulaParcial = Or(Not(conversor(formula.left)), conversor(formula.right))
+        formula = conversor(formulaParcial)
+    
+    return formula
 
+def simplificador_de_not(formula):
+    
+    if isinstance(formula, Atom):
+        return formula
+    
+    elif isinstance(formula, Not):
+        if isinstance(formula.inner, Not):
+            formula = simplificador_de_not(formula.inner.inner)
+            return formula
+        
+        else:
+            formula = Not(simplificador_de_not(formula.inner))
+            return formula
+    
+    elif isinstance(formula, And) or isinstance(formula, Or) or isinstance(formula, Implies):
+        formula.left = simplificador_de_not(formula.left)
+        formula.right = simplificador_de_not(formula.right)
+        
+    return formula
 
-             
-"""formula1 = Or(Atom('p'), Implies(Atom('q'), Atom('r')))  
-formula2 = Or(Not(Atom('p')), Implies(Atom('q'), Atom('r')))  
-formula3 = Or(Atom('p'), Not(Implies(Atom('q'), Atom('r'))))
-formula4 = Or(Not(Atom('p')), Not(Implies(Atom('q'), Atom('r'))))
-
-formula5 = And(Atom('p'), Implies(Atom('q'), Atom('r')))""" 
-
-formula1 = Implies(Atom('q'), Atom('r'))
+"""formula1 = Implies(Atom('q'), Atom('r'))
 formula2 = Implies(Not(Atom('q')), Atom('r'))
 formula3 = Implies(Atom('q'), Not(Atom('r')))
 formula4 = Implies(Not(Atom('q')), Not(Atom('r')))
 
-converterFormula(formula1)
+formula5 = Or(Atom('p'), Implies(Atom('q'), Atom('r')))
+
+print(f'A fórmula {formula5} converteu para: {conversor(formula5)}')
+formula6 = conversor(formula5)
+print(f'A fórmula {formula6} foi simplificada para: {simplificador_de_not(formula6)}')"""
     
     
