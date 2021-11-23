@@ -108,4 +108,7 @@ para que facilite a detecção de satisfabilidade
 
 COMMIT DIA - 13/11/2021
 - Implementações das funções: number_of_atoms, is_clause, is_negation_normal_form, is_cnf, substitution
+
+COMMIT DIA - 22/11/2021
+- Implementações das funções: is_term, is_dnf, truth_value
 """

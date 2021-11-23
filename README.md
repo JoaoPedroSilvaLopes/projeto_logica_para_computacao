@@ -17,14 +17,14 @@ __METAS__
 - [x] Ajeitar a função is_clause(formula)
 - [x] Ajeitar a função is_negation_normal_form(formula)
 - [x] Ajeitar a função is_cnf(formula)
-- [ ] Ajeitar a função is_term(formula)
+- [x] Ajeitar a função is_term(formula)
 - [x] Implementar função substitution(formula, old_subformula, new_subformula)
-- [ ] Implementar função is_dnf(formula)
+- [x] Implementar função is_dnf(formula)
 - [ ] Implementar função is_decomposable_negation_normal_form(formula)
 
 
 > Metas para serem completadas até a próxima semana
 - [x] Implementar função função atoms(formula, vetor = [])
-- [ ] Implementar função truth_value(formula, interpretation)
+- [x] Implementar função truth_value(formula, interpretation)
 - [ ] Implementar função satisfiability_brute_force(formula)
 - [ ] Implementar função de conversor de formulas para operadores binários And
