@@ -247,11 +247,12 @@ def is_term(formula):
         return termo# retorna o termo
 
 
+# VERIFICAR SE A FORMULA ESTÁ NA FORMA NORMAL DISJUNTIVA
 def is_dnf(formula):
     termo = True
-
+    
     if isinstance(formula, Or):# verifica se a formula é uma disjunção 
-
+        
         if isinstance(formula.right or formula.left, Not):# caso exista um NOT, chama a função is_termo para verificação
             termo = termo and is_term(formula.left)  and is_term(formula.right)# guarda o valor em termo
             return termo# retorna termo
@@ -272,7 +273,6 @@ def is_dnf(formula):
             return termo# retorna termo
 
         return termo# retorna termo
-
     else: # Se não satisfazer a exigencia acima
         termo = False# termo recebe false
         return termo# retorna termo
