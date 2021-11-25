@@ -111,4 +111,12 @@ COMMIT DIA - 13/11/2021
 
 COMMIT DIA - 22/11/2021
 - Implementações das funções: is_term, is_dnf, truth_value
+
+COMMIT DIA - 25/11/2021
+- Adicionar de arquivos .csv dos dados dos pacientes
+- Implementação da função criarTabelaPacientes: serve para ler os dados do arquivo .csv e criar um grid com os dados
+- Implementação das funções and_all e or_all: para criar grande formulas com OR's e AND's
+- Implementação das funções restrição1, restrição2 e restrição5: serve para criar as devidas restrições para a criação da grande formula dos dados dos pacientes
+- A fazer restrição4 e restrição5: ainda falta completar as outras duas restrições para a criação da grande formula dos dados dos pacientes
+- Implementação de conversor para AND e simplificador de NOT (função facultativa)
 """

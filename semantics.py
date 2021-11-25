@@ -57,15 +57,6 @@ def is_valid(formula):
 
 
 def satisfiability_brute_force(formula):
-    """Verifica se a fórmula é satisfatória.
-    Em outras palavras, se a fórmula de entrada for satisfatória, ela retornará uma interpretação que atribui verdadeiro à fórmula.
-    Caso contrário, retorna False. """
-    pass
-    # ======== YOUR CODE HERE ========
-
-
-# VERIFICAR A SATISFABILIDADE
-def satisfiability_checking(formula):
     # Lista das atomicas da formula
     list_atoms = atoms(formula)
     
@@ -76,6 +67,7 @@ def satisfiability_checking(formula):
     # Retorno da função
     # REMOVER AS ATOMICAS QUE JA RECEBERAM UMA INTERPRETAÇÃO PARCIAL DA LIST_ATOMS
     return sat(formula, list_atoms, interpretation)
+
 
 # VERIFICAR AS POSSIBILIDADES DE SATISFABILIDADE 
 def sat(formula, list_atoms, interpretation):
@@ -115,7 +107,7 @@ def sat(formula, list_atoms, interpretation):
 # VERIFICAR A VALIDADE
 def validity_checking(formula):
     
-    if satisfiability_checking(Not(formula)) == False: # Se a fórmula não for safisfatível, logo a fórmula é válida
+    if satisfiability_brute_force(Not(formula)) == False: # Se a fórmula não for safisfatível, logo a fórmula é válida
         return True # A fórmula é válida
     
     else: # Caso seja True
