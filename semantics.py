@@ -57,16 +57,18 @@ def is_valid(formula):
 
 
 def satisfiability_brute_force(formula):
-    # Lista das atomicas da formula
-    list_atoms = atoms(formula)
+
+    list_atoms = atoms(formula) # Lista das atomicas da formula
+    
+    print(list_atoms)
     
     # Interpretação
     # DICA DE MELHORIA, QUEBRAR AS FORMULA E TENTAR DEDUZIR AS INTERPRETAÇÕES
-    interpretation = {}
+    #interpretation = {}
     
     # Retorno da função
     # REMOVER AS ATOMICAS QUE JA RECEBERAM UMA INTERPRETAÇÃO PARCIAL DA LIST_ATOMS
-    return sat(formula, list_atoms, interpretation)
+    return list_atoms #False #sat(formula, list_atoms, interpretation)
 
 
 # VERIFICAR AS POSSIBILIDADES DE SATISFABILIDADE 
@@ -173,4 +175,33 @@ print(f'A fórmula {formula5} converteu para: {conversor(formula5)}')
 formula6 = conversor(formula5)
 print(f'A fórmula {formula6} foi simplificada para: {simplificador_de_not(formula6)}')"""
     
-    
+
+
+"""X_PI <= 42.09_1_p
+X_PI <= 42.09_1_n
+X_PI <= 42.09_1_s
+
+
+X_LA <= 39.63_1_p
+X_LA <= 39.63_1_n
+X_LA <= 39.63_1_s
+
+
+--
+X_GS <= 37.89_1_n
+X_GS <= 37.89_1_s
+
+
+X_PI <= 42.09_2_p
+X_PI <= 42.09_2_n
+X_PI <= 42.09_2_s
+
+
+X_LA <= 39.63_2_p
+X_LA <= 39.63_2_n
+X_LA <= 39.63_2_s
+
+
+--
+X_GS <= 37.89_2_n
+X_GS <= 37.89_2_s"""
