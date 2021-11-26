@@ -30,8 +30,8 @@ __METAS__
 - [x] Implementar função de conversor de formulas para operadores binários And
 - [x] Implementar função de restrição 1
 - [x] Implementar função de restrição 2
-- [ ] Implementar função de restrição 3
-- [ ] Implementar função de restrição 4
+- [x] Implementar função de restrição 3
+- [x] Implementar função de restrição 4
 - [x] Implementar função de restrição 5
 
 
