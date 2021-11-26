@@ -68,15 +68,15 @@ def criarTabelaPacientes(arquivo):
 
 
 # OK
-def restrição1(grid, quantRegras):
+def restricao1(grid, quantRegras):
     """[summary]
     Para cada atributo e regra existem 3 possibilidades. O atributo aparece positivamente na 
     regra, o atributo aparece negativamente na regra ou o atributo não aparece na regra. 
 
-    Returns: and_all(formula_restrição1)
+    Returns: and_all(formula_restricao1)
     """
     
-    formula_restrição1 = [] # formula para a restrição 1
+    formula_restricao1 = [] # formula para a restrição 1
     
     for i in grid: # for para percorrer o grid
         i.pop() # remover o ultimo elemento da linha
@@ -89,20 +89,20 @@ def restrição1(grid, quantRegras):
             lista_or.append(str(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_n'))) # atomica Xa,i,n
             lista_or.append(str(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_s'))) # atomica Xa,i,s
             
-            formula_restrição1.append(or_all(lista_or)) # Adicionar na formula da restrição 1 a formula de todas as atomicas com OR
-            
-    return and_all(formula_restrição1) # juntar todas as formulas de ORs em um ANDzao
+            formula_restricao1.append(or_all(lista_or)) # Adicionar na formula da restrição 1 a formula de todas as atomicas com OR
+          
+    return and_all(formula_restricao1) # juntar todas as formulas de ORs em um ANDzao
 
 
 # OK        
-def restrição2(grid, quantRegras):
+def restricao2(grid, quantRegras):
     """[summary]
     Cada regra deve possuir algum atributo aparecendo na mesma.
     
-    Returns: and_all(formula_restrição2)
+    Returns: and_all(formula_restricao2)
     """
     
-    formula_restrição2 = [] # formula para a restrição 2
+    formula_restricao2 = [] # formula para a restrição 2
     
     for i in grid: # for para percorrer o grid
         i.pop() # remover o ultimo elemento da linha
@@ -112,28 +112,28 @@ def restrição2(grid, quantRegras):
         for j in range(len(grid[0])): # for para percorrer as colunas da primeira linha do grid
             lista_or.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_s'))) # Not(Xa,i,s) para construir a segunda restrição
 
-        formula_restrição2.append(or_all(lista_or)) # Adicionar na formula da restrição 2 a formula de todas as atomicas com OR
-            
-    return and_all(formula_restrição2) # juntar todas as formulas de ORs em um ANDzao
+        formula_restricao2.append(or_all(lista_or)) # Adicionar na formula da restrição 2 a formula de todas as atomicas com OR
+        
+    return and_all(formula_restricao2) # juntar todas as formulas de ORs em um ANDzao
 
 
 # OK 
-def restrição3(grid, quantRegras):
+def restricao3(grid, quantRegras):
     """[summary]
     Para cada paciente sem patologia e regra, algum atributo do paciente não
     pode ser aplicado à regra.
     
-    Returns: restrição4(grid, quantRegras)
+    Returns: restricao4(grid, quantRegras)
     """
     
-    formula_restrição3 = [] # formula para a restrição 3
+    formula_restricao3 = [] # formula para a restrição 3
     lista_pacientesSaudaveis = []
-    gridParcial = [] # linha dos atributos
+    gridAtributos = [] # linha dos atributos
     
     for j in grid: # for para percorrer as linhas do grid 
         if j[-1] == str('P'): # se o ultimo elemento da linha for P
             j.pop() # remover o ultimo elemento da linha
-            gridParcial.append(j)  
+            gridAtributos.append(j)  
             
     for i in grid: # for para percorrer as linhas do grid 
         if i[-1] == str(0): # se o ultimo elemento da linha for 0 (evidenciando que o paciente é saudável)
@@ -144,45 +144,29 @@ def restrição3(grid, quantRegras):
         formula_parcial = []
         for j in range(quantRegras): # for para percorrer a quantidade de regras
             lista_or = [] # lista para ORs
-            for index, y in enumerate(i): # for para percorrer a linha j e contabilizar o index
-                
-                #print(index)
-                teste = gridParcial[0][index]
-                print(teste)
-                
-                """if y == str(1): # se o elemento da linha for 1
-                    
-                    #teste = gridParcial[0][index]
-                    #print(teste)
-                    
-                    lista_or.append(Atom('X_' + str(teste) + '_' + str(j + 1) + '_n')) # criação da atomica
-                    
+            for index, y in enumerate(i): # for para percorrer a linha j e contabilizar o index                    
+                if y == str(1): # se o elemento da linha for 1
+                    lista_or.append(Atom('X_' + str(gridAtributos[0][index]) + '_' + str(j + 1) + '_n')) # criação da atomica
+                        
                 elif y == str(0): # se o elemento da linha for 0
+                    lista_or.append(Atom('X_' + str(gridAtributos[0][index]) + '_' + str(j + 1) + '_p')) # criação da atomica    
                     
-                    #teste = gridParcial[0][index]
-                    #print(teste)
-                    
-                    lista_or.append(Atom('X_' + str(teste) + '_' + str(j + 1) + '_p')) # criação da atomica"""
-                    
-                    
-                    
-                    
-            #formula_parcial.append(or_all(lista_or)) # adicionar a lista_or em ORzao e adicionar o resultado na lista formula_parcial
-        #formula_restrição3.append(and_all(formula_parcial)) # adicionar a lista formula_parcial em ANDzao e adicionar o resultado na lista formula_restrição3   
-             
-    return False #and_all(formula_restrição3) # juntar todas as formulas de ANDs em um ANDzao
+            formula_parcial.append(or_all(lista_or)) # adicionar a lista_or em ORzao e adicionar o resultado na lista formula_parcial
+        formula_restricao3.append(and_all(formula_parcial)) # adicionar a lista formula_parcial em ANDzao e adicionar o resultado na lista formula_restricao3   
+    
+    return and_all(formula_restricao3) # juntar todas as formulas de ANDs em um ANDzao
 
 
 # OK
-def restrição4(grid, quantRegras):
+def restricao4(grid, quantRegras):
     """[summary]
     Para cada paciente com patologia, regra e atributo. Se o atributo do
     paciente não se aplicar ao da regra, então a regra não cobre esta paciente.
     
-    Returns and_all(formula_restrição4)
+    Returns and_all(formula_restricao4)
     """
     
-    formula_restrição4 = [] # formula para a restrição 4
+    formula_restricao4 = [] # formula para a restrição 4
     primeiraLinha = [] # linha dos atributos
     
     for j in grid: # for para percorrer as linhas do grid 
@@ -201,25 +185,24 @@ def restrição4(grid, quantRegras):
                     if y == str(1): # se o elemento da linha for 1
                         lista_and.append(str(Implies(Atom(Atom('X_' + str(listaParcial[0][index1]) + '_' + str(i + 1) + '_n')), Not(Atom('C_' + str(i + 1) + '_' + str(index)))))) # criação da atomica
                         
-                    else: # se o elemento da linha for 0
+                    elif y == str(0): # se o elemento da linha for 0
                         lista_and.append(str(Implies(Atom(Atom('X_' + str(listaParcial[0][index1]) + '_' + str(i + 1) + '_p')), Not(Atom('C_' + str(i + 1) + '_' + str(index)))))) # criação da atomica
-                      
+
                 formula_parcial.append(and_all(lista_and)) # adicionar a lista_and em ANDzao e adicionar o resultado na lista formula_parcial
-                
-            formula_restrição4.append(and_all(formula_parcial)) # adicionar a lista formula_parcial em ANDzao e adicionar o resultado na lista formula_restrição4
-    
-    return and_all(formula_restrição4) # juntar todas as formulas de ANDs em um ANDzao
+            formula_restricao4.append(and_all(formula_parcial)) # adicionar a lista formula_parcial em ANDzao e adicionar o resultado na lista formula_restricao4
+            
+    return and_all(formula_restricao4) # juntar todas as formulas de ANDs em um ANDzao
 
 
 # OK
-def restrição5(grid, quantRegras):
+def restricao5(grid, quantRegras):
     """[summary]
     cada paciente com PATOLOGIA deve possuir ser coberto por alguma das regras
     
-    Returns: and_all(formula_restrição5)
+    Returns: and_all(formula_restricao5)
     """
     
-    formula_restrição5 = [] # formula para a restrição 5
+    formula_restricao5 = [] # formula para a restrição 5
     contador = 1 # contador dos pacientes
                 
     for j in grid: # for para percorrer as linhas do grid
@@ -228,43 +211,30 @@ def restrição5(grid, quantRegras):
             for i in range(quantRegras): # for para percorrer a quantidade de regras
                 lista_or.append(str(Atom('C_' + str(i + 1) + '_' + str(contador)))) # criação da atomica
             
-            formula_restrição5.append(or_all(lista_or)) # Adicionar na formula da restrição 5 a formula de todas as atomicas com OR
+            formula_restricao5.append(or_all(lista_or)) # Adicionar na formula da restrição 5 a formula de todas as atomicas com OR
             contador += 1 # adicionar mais um ao contador dos pacientes
  
-    return and_all(formula_restrição5) # juntar todas as formulas de ORs em um ANDzao
+    return and_all(formula_restricao5) # juntar todas as formulas de ORs em um ANDzao
 
 
+# A FAZER
+def solucao(arquivo, quantRegras):   
 
-def solucao(grid, quantRegras):
+    teste1 = restricao1(criarTabelaPacientes(arquivo), quantRegras)
+    teste2 = restricao2(criarTabelaPacientes(arquivo), quantRegras)
+    teste3 = restricao3(criarTabelaPacientes(arquivo), quantRegras)
+    teste4 = restricao4(criarTabelaPacientes(arquivo), quantRegras)
+    teste5 = restricao5(criarTabelaPacientes(arquivo), quantRegras)
     
-    #print(restrição3(grid, quantRegras))
+    #print(teste4)
 
-    formula_final = And(And(restrição1(grid, quantRegras), restrição2(grid, quantRegras)), restrição3(grid, quantRegras))
-    print(formula_final)
+    formula_final = And(And(And(teste1, teste2), And(teste3, teste4)), teste5)
+    
+    satisfiability_brute_force(formula_final)
+
     
     return False #print(formula_final)
 
 
-# TESTE DE RESTRIÇÕES
-teste = criarTabelaPacientes(arquivo1)
-teste1 = restrição1(criarTabelaPacientes(arquivo1), quantRegras1)
-teste2 = restrição2(criarTabelaPacientes(arquivo1), quantRegras1)
-teste3 = restrição3(criarTabelaPacientes(arquivo1), quantRegras1)
-teste4 = restrição4(criarTabelaPacientes(arquivo1), quantRegras1)
-teste5 = restrição5(criarTabelaPacientes(arquivo1), quantRegras1)
-
-#print(teste)
-#print("")
-#print(teste1)
-#print("")
-#print(teste2)
-#print("")
-print(teste3)
-#print("")
-#print(teste4)
-#print("")
-#print(teste5)
-#print("")
-
-solucaoTeste = solucao(criarTabelaPacientes(arquivo1), quantRegras1)
+solucaoTeste = solucao(arquivo1, quantRegras1)
 print(solucaoTeste)
