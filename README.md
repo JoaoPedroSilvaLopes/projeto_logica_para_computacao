@@ -26,12 +26,13 @@ __METAS__
 > Metas para serem completadas até a próxima semana
 - [x] Implementar função função atoms(formula, vetor = [])
 - [x] Implementar função truth_value(formula, interpretation)
-- [ ] Implementar função satisfiability_brute_force(formula)
+- [x] Implementar função satisfiability_brute_force(formula)
 - [x] Implementar função de conversor de formulas para operadores binários And
 - [x] Implementar função de restrição 1
 - [x] Implementar função de restrição 2
 - [x] Implementar função de restrição 3
 - [x] Implementar função de restrição 4
 - [x] Implementar função de restrição 5
-
+- [x] Implementar função de solução
+- [x] Implementar função de remove_atoms
 
