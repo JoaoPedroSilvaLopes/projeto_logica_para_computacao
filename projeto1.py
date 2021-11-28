@@ -3,7 +3,7 @@ import csv
 from semantics import *
 from functions import *
 
-arquivo1 = 'dados_pacientes/column_bin_3a_4p.csv'
+arquivo1 = 'dados_pacientes/testecolumn_bin_3a_3p.csv'
 quantRegras1 = 2
 
 """
@@ -30,7 +30,7 @@ paciente não se aplicar ao da regra, então a regra não cobre esta paciente.
 """
 
 
-# colocar todas as formulas em um ORzao
+# COLOCAR TODAS AS FORMULAS EM UM ORZAO
 def or_all(list_formulas):
     
     first_formula = list_formulas[0] # Pegar a primeira formula da lista das células
@@ -42,7 +42,7 @@ def or_all(list_formulas):
     return first_formula # Retornar todas as células juntas com OU's
 
 
-# colocar todas as formulas em um ANDzao
+# COLOCAR TODAS AS FORMULAS EM UM ANDZAO
 def and_all(list_formulas):
     
     first_formula = list_formulas[0] # Pegar a primeira formula da lista das células
@@ -54,7 +54,7 @@ def and_all(list_formulas):
     return first_formula # Retornar todas as células juntas com E's
 
 
-# criar o grid com os dados dos pacientes
+# CRIAR O GRID COM OS DADOS DOS PACIENTES
 def criarTabelaPacientes(arquivo):
     
     with open(arquivo) as csv_file: # CRIAR GRID
@@ -66,8 +66,8 @@ def criarTabelaPacientes(arquivo):
     
         return vetor
 
-
-# OK
+    
+# RESTRIÇÃO 1
 def restricao1(grid, quantRegras):
     """[summary]
     Para cada atributo e regra existem 3 possibilidades. O atributo aparece positivamente na 
@@ -83,18 +83,35 @@ def restricao1(grid, quantRegras):
     
     for j in range(len(grid[0])): # for para percorrer as colunas da primeira linha do grid
         for i in range(quantRegras): # for para percorrer a quantidade de regras
-            lista_or = [] # lista para ORs
+            lista_and = [] # setar lista como vazio
+            lista_parcial = [] # lista parcial que serve como auxiliar na construção da formula
             
-            lista_or.append(str(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_p'))) # atomica Xa,i,p
-            lista_or.append(str(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_n'))) # atomica Xa,i,n
-            lista_or.append(str(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_s'))) # atomica Xa,i,s
+            lista_and.append(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_p')) # atomica Xa,i,p
+            lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_n'))) # atomica -Xa,i,n
+            lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_s'))) # atomica -Xa,i,s
             
-            formula_restricao1.append(or_all(lista_or)) # Adicionar na formula da restrição 1 a formula de todas as atomicas com OR
-          
+            lista_parcial.append(and_all(lista_and)) # adicionar lista_and em um and_all e adicionar o resultado na lista_parcial
+            lista_and.clear() # limpar a lista de AND
+            
+            lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_p'))) # atomica -Xa,i,p
+            lista_and.append(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_n')) # atomica Xa,i,n
+            lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_s'))) # atomica -Xa,i,s]
+            
+            lista_parcial.append(and_all(lista_and)) # adicionar lista_and em um and_all e adicionar o resultado na lista_parcial
+            lista_and.clear() # limpar a lista de AND
+
+            lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_p'))) # atomica -Xa,i,p
+            lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_n'))) # atomica -Xa,i,n
+            lista_and.append(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_s')) # atomica Xa,i,s
+
+            lista_parcial.append(and_all(lista_and)) # adicionar lista_and em um and_all e adicionar o resultado na lista_parcial
+            
+            formula_restricao1.append(or_all(lista_parcial)) # adicionar a lista_parcial em um or_all e adicionar o resulta na formula_restrição1
+           
     return and_all(formula_restricao1) # juntar todas as formulas de ORs em um ANDzao
 
 
-# OK        
+# RESTRIÇÃO 2        
 def restricao2(grid, quantRegras):
     """[summary]
     Cada regra deve possuir algum atributo aparecendo na mesma.
@@ -117,7 +134,7 @@ def restricao2(grid, quantRegras):
     return and_all(formula_restricao2) # juntar todas as formulas de ORs em um ANDzao
 
 
-# OK 
+# RESTRIÇÃO 3
 def restricao3(grid, quantRegras):
     """[summary]
     Para cada paciente sem patologia e regra, algum atributo do paciente não
@@ -157,7 +174,7 @@ def restricao3(grid, quantRegras):
     return and_all(formula_restricao3) # juntar todas as formulas de ANDs em um ANDzao
 
 
-# OK
+# RESTRIÇÃO 4
 def restricao4(grid, quantRegras):
     """[summary]
     Para cada paciente com patologia, regra e atributo. Se o atributo do
@@ -183,10 +200,10 @@ def restricao4(grid, quantRegras):
                 lista_and = [] # lista para ANDs
                 for index1, y in enumerate(j): # for percorrer a linha j e contabilizar o index
                     if y == str(1): # se o elemento da linha for 1
-                        lista_and.append(str(Implies(Atom(Atom('X_' + str(listaParcial[0][index1]) + '_' + str(i + 1) + '_n')), Not(Atom('C_' + str(i + 1) + '_' + str(index)))))) # criação da atomica
+                        lista_and.append(Implies(Atom(Atom('X_' + str(listaParcial[0][index1]) + '_' + str(i + 1) + '_n')), Not(Atom('C_' + str(i + 1) + '_' + str(index))))) # criação da atomica
                         
                     elif y == str(0): # se o elemento da linha for 0
-                        lista_and.append(str(Implies(Atom(Atom('X_' + str(listaParcial[0][index1]) + '_' + str(i + 1) + '_p')), Not(Atom('C_' + str(i + 1) + '_' + str(index)))))) # criação da atomica
+                        lista_and.append(Implies(Atom(Atom('X_' + str(listaParcial[0][index1]) + '_' + str(i + 1) + '_p')), Not(Atom('C_' + str(i + 1) + '_' + str(index))))) # criação da atomica
 
                 formula_parcial.append(and_all(lista_and)) # adicionar a lista_and em ANDzao e adicionar o resultado na lista formula_parcial
             formula_restricao4.append(and_all(formula_parcial)) # adicionar a lista formula_parcial em ANDzao e adicionar o resultado na lista formula_restricao4
@@ -194,7 +211,7 @@ def restricao4(grid, quantRegras):
     return and_all(formula_restricao4) # juntar todas as formulas de ANDs em um ANDzao
 
 
-# OK
+# RESTRIÇÃO 5
 def restricao5(grid, quantRegras):
     """[summary]
     cada paciente com PATOLOGIA deve possuir ser coberto por alguma das regras
@@ -209,7 +226,7 @@ def restricao5(grid, quantRegras):
         if j[-1] == str(1): # se o ultimo elemento da linha for 1
             lista_or = [] # lista para ORs 
             for i in range(quantRegras): # for para percorrer a quantidade de regras
-                lista_or.append(str(Atom('C_' + str(i + 1) + '_' + str(contador)))) # criação da atomica
+                lista_or.append(Atom('C_' + str(i + 1) + '_' + str(contador))) # criação da atomica
             
             formula_restricao5.append(or_all(lista_or)) # Adicionar na formula da restrição 5 a formula de todas as atomicas com OR
             contador += 1 # adicionar mais um ao contador dos pacientes
@@ -217,7 +234,7 @@ def restricao5(grid, quantRegras):
     return and_all(formula_restricao5) # juntar todas as formulas de ORs em um ANDzao
 
 
-# A FAZER
+# SOLUÇÃO
 def solucao(arquivo, quantRegras):   
 
     teste1 = restricao1(criarTabelaPacientes(arquivo), quantRegras)
@@ -225,16 +242,40 @@ def solucao(arquivo, quantRegras):
     teste3 = restricao3(criarTabelaPacientes(arquivo), quantRegras)
     teste4 = restricao4(criarTabelaPacientes(arquivo), quantRegras)
     teste5 = restricao5(criarTabelaPacientes(arquivo), quantRegras)
-    
-    #print(teste4)
 
     formula_final = And(And(And(teste1, teste2), And(teste3, teste4)), teste5)
+    resultado = satisfiability_brute_force(formula_final)
     
-    satisfiability_brute_force(formula_final)
-
+    lista_parcial = []
+    lista_final_de_regras = []
     
-    return False #print(formula_final)
+    if resultado != False: # se o resultado for diferente de falso
+        for array in resultado: # percorrer a lista com as atomicas com valoração verdadeira
+            lista_segregada = array.split('_') # segregar os elementos pela string '_'
+            if array.split('_')[0] == 'X': # Caso 
+                lista_segregada.pop(0) # remover primeiro elemento
+                if lista_segregada[-1] == 'p': # se o ultimo elemento for a string 'p'
+                    lista_segregada.pop() # remover o ultimo elemento
+                    lista_parcial.append(lista_segregada) # acrescentar lista_segredada à lista_parcial
+                    
+                elif lista_segregada[-1] == 'n': # se o ultimo elemento for a string 'n'
+                    lista_segregada.pop() # remover o ultimo elemento
+                    lista_segregada[0] = lista_segregada[0].replace('<=', '>') # fazer a inversão de desigualdades
+                    lista_parcial.append(lista_segregada) # acrescentar lista_segredada à lista_parcial
+    
+    for regras in range(quantRegras): # for para percorrer a quantidade de regras
+        lista_parcial_de_regras = [] # lista auxiliar para construir as regras
+        
+        for lista_de_regras in lista_parcial: # for para percorrer as linhas da lista parcial
+            if str(lista_de_regras[-1]) == str(regras + 1): # se o ultimo elemento da linha for igual ao numero da regra
+                lista_parcial_de_regras.append(lista_de_regras[0]) # acrescentar o primeiro elemento da linha (atributo) à lista_parcial_de_regras
+                
+        lista_final_de_regras.append(lista_parcial_de_regras) # acrescentar a lista_parcial_de_regras à lista_final_de_regras
+            
+    for index, i in enumerate(lista_final_de_regras): # percorrer lista_final_de_regras para criar a mensagem das regras
+        print(f'REGRA {index + 1}: {i} => P')
+        
+    return lista_de_regras
 
 
 solucaoTeste = solucao(arquivo1, quantRegras1)
-print(solucaoTeste)
