@@ -119,4 +119,10 @@ COMMIT DIA - 25/11/2021
 - Implementação das funções restrição1, restrição2 e restrição5: serve para criar as devidas restrições para a criação da grande formula dos dados dos pacientes
 - A fazer restrição4 e restrição5: ainda falta completar as outras duas restrições para a criação da grande formula dos dados dos pacientes
 - Implementação de conversor para AND e simplificador de NOT (função facultativa)
+
+COMMIT DIA - 28/11/2021
+- Implementação da criação das regras com a função solucao(arquivo, quantRegras) na pasta projeto1.py
+- Implementação da função satisfiability_brute_force(formula) na pasta semantics.py
+- Implementação da função sat(formula, list_atoms, interpretation_parcial) na pasta semantics.py
+- Implementação da função de remove_atoms(list_atoms, interpretation_parcial) na pasta semantics.py
 """
