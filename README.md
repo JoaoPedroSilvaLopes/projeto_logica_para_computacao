@@ -7,7 +7,7 @@ __MEMBROS__:
 - Yan de Oliveira Falcão
 
 __METAS__
-> Metas para serem completada até o final da semana
+> Metas para serem completadas até dia 30/11/2021
 - [x] Implementar função length(formula)
 - [x] Implementar função subformulas(formula, vetor = [])
 - [x] Implementar função atoms(formula, vetor = [])
@@ -21,9 +21,6 @@ __METAS__
 - [x] Implementar função substitution(formula, old_subformula, new_subformula)
 - [x] Implementar função is_dnf(formula)
 - [ ] Implementar função is_decomposable_negation_normal_form(formula)
-
-
-> Metas para serem completadas até a próxima semana
 - [x] Implementar função função atoms(formula, vetor = [])
 - [x] Implementar função truth_value(formula, interpretation)
 - [x] Implementar função satisfiability_brute_force(formula)
@@ -35,4 +32,7 @@ __METAS__
 - [x] Implementar função de restrição 5
 - [x] Implementar função de solução
 - [x] Implementar função de remove_atoms
+- [x] Implementar função de criação de regras
+- [x] Implementar função de diagnostico de pacientes
+- [ ] Organizar o código e acrescentar comentário adicionais
 
