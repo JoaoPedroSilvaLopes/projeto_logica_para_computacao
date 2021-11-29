@@ -20,7 +20,6 @@ __METAS__
 - [x] Ajeitar a função is_term(formula)
 - [x] Implementar função substitution(formula, old_subformula, new_subformula)
 - [x] Implementar função is_dnf(formula)
-- [ ] Implementar função is_decomposable_negation_normal_form(formula)
 - [x] Implementar função função atoms(formula, vetor = [])
 - [x] Implementar função truth_value(formula, interpretation)
 - [x] Implementar função satisfiability_brute_force(formula)
@@ -34,5 +33,4 @@ __METAS__
 - [x] Implementar função de remove_atoms
 - [x] Implementar função de criação de regras
 - [x] Implementar função de diagnostico de pacientes
-- [ ] Organizar o código e acrescentar comentário adicionais
-
+- [x] Organizar o código e acrescentar comentário adicionais
