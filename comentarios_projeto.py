@@ -131,4 +131,5 @@ COMMID DIA 29/11/2021
 - Implementação de uma função propria para criar as regras chamada de criar_regras(lista_parcial, quantRegras) na pasta projeto1.py
 - Alterações no README baseado na alterações
 - Exclusão da pasta main (pois estava sem utilidade)
+- Inserção de comentários adicionais e organização do codigo como um todo
 """
