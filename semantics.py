@@ -39,6 +39,17 @@ def truth_value(formula, interpretation):
 # VERIFICAR A SATISFABILIDADE DE FORMA BRUTA
 def satisfiability_brute_force(formula):
 
+    """
+    interpretation_parcial = 
+    [
+        ['X_PI <= 42.09_1_p', False], ['X_PI <= 42.09_1_n', True], ['X_PI <= 42.09_1_s', False], ['X_PI <= 42.09_2_p', False], 
+        ['X_PI <= 42.09_2_n', False], ['X_PI <= 42.09_2_s', True], ['X_PI <= 70.62_1_p', True], ['X_PI <= 70.62_1_n', False], 
+        ['X_PI <= 70.62_1_s', False], ['X_PI <= 70.62_2_p', False], ['X_PI <= 70.62_2_n', False], ['X_PI <= 70.62_2_s', True], 
+        ['X_GS <= 37.89_1_p', False], ['X_GS <= 37.89_1_n', False], ['X_GS <= 37.89_1_s', True], ['X_GS <= 37.89_2_p', False], 
+        ['X_GS <= 37.89_2_n', True], ['X_GS <= 37.89_2_s', False], ['C_1_1', False], ['C_1_2', True], ['C_2_1', True], ['C_2_2', True]
+    ]
+    """
+
     list_atoms = atoms(formula) # Lista das atomicas da formula
     interpretation_parcial = []
     vetorA = []
@@ -118,3 +129,49 @@ def remove_atoms(list_atoms, interpretation_parcial):
               
     return lista_atoms_removidos # retornar lista_atoms_removidos
 
+
+def conversor(formula):
+    
+    if isinstance(formula, Atom):
+        return formula
+    
+    elif isinstance(formula, Not):
+        if isinstance(formula.inner, Atom):
+            return formula
+        
+        else:
+            formula = conversor(formula.inner)
+            return formula
+    
+    elif isinstance(formula, And):
+        formula = And(conversor(formula.left), conversor(formula.right))
+    
+    elif isinstance(formula, Or):
+        formula = Not(And(Not(conversor(formula.left)), Not(conversor(formula.right))))
+
+    elif isinstance(formula, Implies):
+        formulaParcial = Or(Not(conversor(formula.left)), conversor(formula.right))
+        formula = conversor(formulaParcial)
+    
+    return formula
+
+
+def simplificador_de_not(formula):
+    
+    if isinstance(formula, Atom):
+        return formula
+    
+    elif isinstance(formula, Not):
+        if isinstance(formula.inner, Not):
+            formula = simplificador_de_not(formula.inner.inner)
+            return formula
+        
+        else:
+            formula = Not(simplificador_de_not(formula.inner))
+            return formula
+    
+    elif isinstance(formula, And) or isinstance(formula, Or) or isinstance(formula, Implies):
+        formula.left = simplificador_de_not(formula.left)
+        formula.right = simplificador_de_not(formula.right)
+        
+    return formula
