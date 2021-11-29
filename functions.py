@@ -1,8 +1,5 @@
-"""The goal in this module is to define functions that take a formula as input and
-do some computation on its syntactic structure. """
-
-
 from formula import *
+
 
 # MOSTRAR O TAMANHO DE UMA FÓRMULA
 def length(formula):
@@ -186,7 +183,6 @@ def is_negation_normal_form(formula):
 def is_cnf(formula):
     
     if isinstance(formula, Atom): # Se a formula for uma atomica que por tabela é uma cláusula entao esta em CNF, pois A = A /\ A = (A V A) /\ (A V A)
-        print('é cnf')
         return True # Retornar True
     
     if isinstance(formula, Not): # Se a formula for uma negação
@@ -220,62 +216,63 @@ def is_term(formula):
 
     if isinstance(formula, And): # verifica se é uma conjunção de literais
 
-        if isinstance(formula.right and formula.left, Atom):# caso sejam atômicas
-            termo = termo and is_literal(formula.right) and is_literal(formula.left)# guarda o valor true ou false na variavel termo, só será termo se as duas forem
-            return termo# retorna o termo
+        if isinstance(formula.right and formula.left, Atom): # caso sejam atômicas
+            termo = termo and is_literal(formula.right) and is_literal(formula.left) # guarda o valor true ou false na variavel termo, só será termo se as duas forem
+            return termo # retorna o termo
 
-        if isinstance(formula.right or formula.left, Not):# caso exista uma NOT, já chama a função is_literal
-            termo = termo and is_literal(formula.left)  and is_literal(formula.right)# guarda o valor true ou false na variavel termo, só será termo se as duas forem
-            return termo# retorna o termo
+        if isinstance(formula.right or formula.left, Not): # caso exista uma NOT, já chama a função is_literal
+            termo = termo and is_literal(formula.left)  and is_literal(formula.right) # guarda o valor true ou false na variavel termo, só será termo se as duas forem
+            return termo # retorna o termo
 
-        if isinstance(formula.left and formula.right, And):# caso exista uma encadeado de AND, nos dois lados da formula
-            is_term(formula.right)# chama a função recursivamente
-            is_term(formula.left)# chama a função recursivamente
+        if isinstance(formula.left and formula.right, And): # caso exista uma encadeado de AND, nos dois lados da formula
+            is_term(formula.right) # chama a função recursivamente
+            is_term(formula.left) # chama a função recursivamente
         
-        elif isinstance(formula.left or formula.right, And):# caso exista uma encadeado de AND, em um dos lados da formula
+        elif isinstance(formula.left or formula.right, And): # caso exista uma encadeado de AND, em um dos lados da formula
             if isinstance(formula.left, And):
-                is_term(formula.left)# chama a função recursivamente
-                termo = termo and is_literal(formula.right)# guarda o valor de um dos lados em termo
+                is_term(formula.left) # chama a função recursivamente
+                termo = termo and is_literal(formula.right) # guarda o valor de um dos lados em termo
             else:
-                is_term(formula.right)# chama a função recursivamente
-                termo = termo and is_literal(formula.left)# guarda o valor de um dos lados em termo
+                is_term(formula.right) # chama a função recursivamente
+                termo = termo and is_literal(formula.left) # guarda o valor de um dos lados em termo
 
-        return termo# retorna o termo
+        return termo # retorna o termo
         
     else: # Se não satisfazer a exigencia acima
-        termo = False# termo recebe o valor false
-        return termo# retorna o termo
+        termo = False # termo recebe o valor false
+        return termo # retorna o termo
 
 
 # VERIFICAR SE A FORMULA ESTÁ NA FORMA NORMAL DISJUNTIVA
 def is_dnf(formula):
     termo = True
     
-    if isinstance(formula, Or):# verifica se a formula é uma disjunção 
+    if isinstance(formula, Or): # verifica se a formula é uma disjunção 
         
-        if isinstance(formula.right or formula.left, Not):# caso exista um NOT, chama a função is_termo para verificação
-            termo = termo and is_term(formula.left)  and is_term(formula.right)# guarda o valor em termo
-            return termo# retorna termo
+        if isinstance(formula.right or formula.left, Not): # caso exista um NOT, chama a função is_termo para verificação
+            termo = termo and is_term(formula.left)  and is_term(formula.right) # guarda o valor em termo
+            return termo # retorna termo
 
-        if isinstance(formula.left and formula.right, Or):# caso exista um encadeado de OR, nos dois lados
-            is_dnf(formula.right)# chama a função recursivamente
-            is_dnf(formula.left)# chama a função recursivamente
+        if isinstance(formula.left and formula.right, Or): # caso exista um encadeado de OR, nos dois lados
+            is_dnf(formula.right) # chama a função recursivamente
+            is_dnf(formula.left) # chama a função recursivamente
 
-        elif isinstance(formula.left or formula.right, Or):# caso exista um encadeado de OR, em um dos lados
+        elif isinstance(formula.left or formula.right, Or): # caso exista um encadeado de OR, em um dos lados
             if isinstance(formula.left, Or):
-                is_dnf(formula.left)# chama a função recursivamente
-                termo = termo and is_term(formula.right)# guarda o valor em termo
+                is_dnf(formula.left) # chama a função recursivamente
+                termo = termo and is_term(formula.right) # guarda o valor em termo
             else:
-                is_dnf(formula.right)# chama a função recursivamente
-                termo = termo and is_term(formula.left)# guarda o valor em termo
+                is_dnf(formula.right) # chama a função recursivamente
+                termo = termo and is_term(formula.left) # guarda o valor em termo
         else:
-            termo = termo and is_term(formula.right) and is_term(formula.left)# se não se encaixar em nenhuma das situações anteriores, a função is_term é chamada
-            return termo# retorna termo
+            termo = termo and is_term(formula.right) and is_term(formula.left) # se não se encaixar em nenhuma das situações anteriores, a função is_term é chamada
+            return termo # retorna termo
 
-        return termo# retorna termo
+        return termo # retorna termo
+    
     else: # Se não satisfazer a exigencia acima
-        termo = False# termo recebe false
-        return termo# retorna termo
+        termo = False # termo recebe false
+        return termo # retorna termo
 
 
 def is_decomposable_negation_normal_form(formula):

@@ -1,38 +1,11 @@
 import csv
-
 from semantics import *
 from functions import *
 import time
 
-arquivo1 = 'dados_pacientes/column_bin_3a_4p.csv'
-quantRegras1 = 2
-
-"""
-ATOMICAS:
-
-X a, i, p
-X a, i, n
-x a, i, s
-C i, j
-
-a = atributo
-i = natural representando a iesima regra (1 <= i <= m)
-j = natural representando a quantidade de pacientes (1 <= j <= n)
-n = quantidade de pacientes
-
-v(X a, i, p) = é True (T) se e somente se o atributo 'a' ocorre positivamente na regra 'i'
-v(X a, i, n) = é True (T) se e somente se o atributo 'a' ocorre negativamente na regra 'i'
-v(X a, i, s) = é True (T) se o atributo 'a' não aparece na regra 'i'
-v(C i, j) = é True (T) se a regra 'i' cobre o paciente 'j', ou seja, quando a 'i' se aplica a 'j'
-
-- Quarta restrição: Para cada paciente com patologia, regra e atributo. Se o atributo do
-paciente não se aplicar ao da regra, então a regra não cobre esta paciente.
-
-"""
-
 
 # COLOCAR TODAS AS FORMULAS EM UM ORZAO
-def or_all(list_formulas):
+def orzao(list_formulas):
     
     first_formula = list_formulas[0] # Pegar a primeira formula da lista das células
     del list_formulas[0] # Deletar a primeira formula para não haver repetição
@@ -44,7 +17,7 @@ def or_all(list_formulas):
 
 
 # COLOCAR TODAS AS FORMULAS EM UM ANDZAO
-def and_all(list_formulas):
+def andzao(list_formulas):
     
     first_formula = list_formulas[0] # Pegar a primeira formula da lista das células
     del list_formulas[0] # Deletar a primeira formula para não haver repetição
@@ -74,7 +47,7 @@ def restricao1(grid, quantRegras):
     Para cada atributo e regra existem 3 possibilidades. O atributo aparece positivamente na 
     regra, o atributo aparece negativamente na regra ou o atributo não aparece na regra. 
 
-    Returns: and_all(formula_restricao1)
+    Returns: andzao(formula_restricao1)
     """
     
     formula_restricao1 = [] # formula para a restrição 1
@@ -91,24 +64,24 @@ def restricao1(grid, quantRegras):
             lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_n'))) # atomica -Xa,i,n
             lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_s'))) # atomica -Xa,i,s
             
-            lista_parcial.append(and_all(lista_and)) # adicionar lista_and em um and_all e adicionar o resultado na lista_parcial
+            lista_parcial.append(andzao(lista_and)) # adicionar lista_and em um andzao e adicionar o resultado na lista_parcial
             lista_and.clear() # limpar a lista de AND
             
             lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_p'))) # atomica -Xa,i,p
             lista_and.append(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_n')) # atomica Xa,i,n
             lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_s'))) # atomica -Xa,i,s]
             
-            lista_parcial.append(and_all(lista_and)) # adicionar lista_and em um and_all e adicionar o resultado na lista_parcial
+            lista_parcial.append(andzao(lista_and)) # adicionar lista_and em um andzao e adicionar o resultado na lista_parcial
             lista_and.clear() # limpar a lista de AND
 
             lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_p'))) # atomica -Xa,i,p
             lista_and.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_n'))) # atomica -Xa,i,n
             lista_and.append(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_s')) # atomica Xa,i,s
 
-            lista_parcial.append(and_all(lista_and)) # adicionar lista_and em um and_all e adicionar o resultado na lista_parcial
-            formula_restricao1.append(or_all(lista_parcial)) # adicionar a lista_parcial em um or_all e adicionar o resulta na formula_restrição1
+            lista_parcial.append(andzao(lista_and)) # adicionar lista_and em um andzao e adicionar o resultado na lista_parcial
+            formula_restricao1.append(orzao(lista_parcial)) # adicionar a lista_parcial em um orzao e adicionar o resulta na formula_restrição1
            
-    return and_all(formula_restricao1) # juntar todas as formulas de ORs em um ANDzao
+    return andzao(formula_restricao1) # juntar todas as formulas de ORs em um ANDzao
 
 
 # RESTRIÇÃO 2        
@@ -116,7 +89,7 @@ def restricao2(grid, quantRegras):
     """[summary]
     Cada regra deve possuir algum atributo aparecendo na mesma.
     
-    Returns: and_all(formula_restricao2)
+    Returns: andzao(formula_restricao2)
     """
     
     formula_restricao2 = [] # formula para a restrição 2
@@ -129,9 +102,9 @@ def restricao2(grid, quantRegras):
         for j in range(len(grid[0])): # for para percorrer as colunas da primeira linha do grid
             lista_or.append(Not(Atom('X_' + str(grid[0][j]) + '_' + str(i + 1) + '_s'))) # Not(Xa,i,s) para construir a segunda restrição
 
-        formula_restricao2.append(or_all(lista_or)) # Adicionar na formula da restrição 2 a formula de todas as atomicas com OR
+        formula_restricao2.append(orzao(lista_or)) # Adicionar na formula da restrição 2 a formula de todas as atomicas com OR
         
-    return and_all(formula_restricao2) # juntar todas as formulas de ORs em um ANDzao
+    return andzao(formula_restricao2) # juntar todas as formulas de ORs em um ANDzao
 
 
 # RESTRIÇÃO 3
@@ -165,10 +138,10 @@ def restricao3(grid, quantRegras):
                 elif y == str(0): # se o elemento da linha for 0
                     lista_or.append(Atom('X_' + str(primeiraLinha[index]) + '_' + str(j + 1) + '_p')) # criação da atomica    
                     
-            formula_parcial.append(or_all(lista_or)) # adicionar a lista_or em ORzao e adicionar o resultado na lista formula_parcial
-        formula_restricao3.append(and_all(formula_parcial)) # adicionar a lista formula_parcial em ANDzao e adicionar o resultado na lista formula_restricao3   
+            formula_parcial.append(orzao(lista_or)) # adicionar a lista_or em ORzao e adicionar o resultado na lista formula_parcial
+        formula_restricao3.append(andzao(formula_parcial)) # adicionar a lista formula_parcial em ANDzao e adicionar o resultado na lista formula_restricao3   
     
-    return and_all(formula_restricao3) # juntar todas as formulas de ANDs em um ANDzao
+    return andzao(formula_restricao3) # juntar todas as formulas de ANDs em um ANDzao
 
 
 # RESTRIÇÃO 4
@@ -177,7 +150,7 @@ def restricao4(grid, quantRegras):
     Para cada paciente com patologia, regra e atributo. Se o atributo do
     paciente não se aplicar ao da regra, então a regra não cobre esta paciente.
     
-    Returns and_all(formula_restricao4)
+    Returns andzao(formula_restricao4)
     """
     
     formula_restricao4 = []
@@ -198,10 +171,10 @@ def restricao4(grid, quantRegras):
                     elif y == str(0): # se o elemento da linha for 0
                         lista_and.append(Implies(Atom(Atom('X_' + str(listaParcial[index1]) + '_' + str(i + 1) + '_p')), Not(Atom('C_' + str(i + 1) + '_' + str(index + 1))))) # criação da atomica
 
-                formula_parcial.append(and_all(lista_and)) # adicionar a lista_and em ANDzao e adicionar o resultado na lista formula_parcial
-            formula_restricao4.append(and_all(formula_parcial)) # adicionar a lista formula_parcial em ANDzao e adicionar o resultado na lista formula_restricao4
+                formula_parcial.append(andzao(lista_and)) # adicionar a lista_and em ANDzao e adicionar o resultado na lista formula_parcial
+            formula_restricao4.append(andzao(formula_parcial)) # adicionar a lista formula_parcial em ANDzao e adicionar o resultado na lista formula_restricao4
     
-    return and_all(formula_restricao4) # juntar todas as formulas de ANDs em um ANDzao
+    return andzao(formula_restricao4) # juntar todas as formulas de ANDs em um ANDzao
 
 
 # RESTRIÇÃO 5
@@ -209,7 +182,7 @@ def restricao5(grid, quantRegras):
     """[summary]
     cada paciente com PATOLOGIA deve possuir ser coberto por alguma das regras
     
-    Returns: and_all(formula_restricao5)
+    Returns: andzao(formula_restricao5)
     """
     
     formula_restricao5 = [] # formula para a restrição 5
@@ -221,26 +194,26 @@ def restricao5(grid, quantRegras):
             for i in range(quantRegras): # for para percorrer a quantidade de regras
                 lista_or.append(Atom('C_' + str(i + 1) + '_' + str(contador))) # criação da atomica
             
-            formula_restricao5.append(or_all(lista_or)) # Adicionar na formula da restrição 5 a formula de todas as atomicas com OR
+            formula_restricao5.append(orzao(lista_or)) # Adicionar na formula da restrição 5 a formula de todas as atomicas com OR
             contador += 1 # adicionar mais um ao contador dos pacientes
  
-    return and_all(formula_restricao5) # juntar todas as formulas de ORs em um ANDzao
+    return andzao(formula_restricao5) # juntar todas as formulas de ORs em um ANDzao
 
 
 # SOLUÇÃO
 def solucao(arquivo, quantRegras):  
      
-    teste1 = restricao1(criarTabelaPacientes(arquivo), quantRegras)
-    teste2 = restricao2(criarTabelaPacientes(arquivo), quantRegras)
-    teste3 = restricao3(criarTabelaPacientes(arquivo), quantRegras)
-    teste4 = restricao4(criarTabelaPacientes(arquivo), quantRegras)
-    teste5 = restricao5(criarTabelaPacientes(arquivo), quantRegras)
+    R1 = restricao1(criarTabelaPacientes(arquivo), quantRegras) # formula da restricao1
+    R2 = restricao2(criarTabelaPacientes(arquivo), quantRegras) # formula da restricao2
+    R3 = restricao3(criarTabelaPacientes(arquivo), quantRegras) # formula da restricao3
+    R4 = restricao4(criarTabelaPacientes(arquivo), quantRegras) # formula da restricao4
+    R5 = restricao5(criarTabelaPacientes(arquivo), quantRegras) # formula da restricao5
 
-    formula_final = And(And(And(teste1, teste2), And(teste3, teste4)), teste5)
-    resultado = satisfiability_brute_force(formula_final)
+    formula_final = And(And(And(R1, R2), And(R3, R4)), R5) # formula final é o and de todas as restrições
+    resultado = satisfiability_brute_force(formula_final) # atribuir ao resultado o resultado de satisfiability_brute_force(formula_final)
     
-    valores_dados = []
-    lista_parcial = []
+    valores_dados = [] # lista paga guardar os valores dos dados dos pacientes
+    lista_parcial = [] # lista auxiliar para criar as regras
     
     if resultado != False: # se o resultado for diferente de falso
         for array in resultado: # percorrer a lista com as atomicas com valoração verdadeira
@@ -256,22 +229,22 @@ def solucao(arquivo, quantRegras):
                     lista_segregada[0] = lista_segregada[0].replace('<=', '>') # fazer a inversão de desigualdades
                     lista_parcial.append(lista_segregada) # acrescentar lista_segredada à lista_parcial
                     
-    regras = criar_regras(lista_parcial, quantRegras)
+    regras = criar_regras(lista_parcial, quantRegras) # regras recebe a lista_final_de_regras provenientes da função criar_regras
     
-    grid_pacientes = criarTabelaPacientes(arquivo)
-    linha_atributos = grid_pacientes.pop(0)
-    linha_atributos.pop()
+    grid_pacientes = criarTabelaPacientes(arquivo) # criar um grid novo e atribuilo a grid_pacientes
+    linha_atributos = grid_pacientes.pop(0) # remover a primeiro elemento de grid_pacientes e atribuito tal elemento a linha_atributos
+    linha_atributos.pop() # remover o ultimo elemento da linha_atributos ('P')
     
-    for i in grid_pacientes:
-        valores_dados.append(i.pop())
+    for i in grid_pacientes: # for para percorrer o grid pacientes
+        valores_dados.append(i.pop()) # remover o ultimo elemento de grid_pacientes e acrescenta-los ao valores_dados
     
-    laudarPacientes(regras, grid_pacientes, linha_atributos, valores_dados, quantRegras)
+    return laudarPacientes(regras, grid_pacientes, linha_atributos, valores_dados, quantRegras) # retornar o laudo dos pacientes
 
 
 # CRIAR REGRAS
 def criar_regras(lista_parcial, quantRegras):
     
-    lista_final_de_regras = []
+    lista_final_de_regras = [] # lista para guardar as regras
 
     for regras in range(quantRegras): # for para percorrer a quantidade de regras
         lista_parcial_de_regras = [] # lista auxiliar para construir as regras
@@ -283,64 +256,64 @@ def criar_regras(lista_parcial, quantRegras):
         lista_final_de_regras.append(lista_parcial_de_regras) # acrescentar a lista_parcial_de_regras à lista_final_de_regras
             
     for index, i in enumerate(lista_final_de_regras): # percorrer lista_final_de_regras para criar a mensagem das regras
-        print(f'REGRA {index + 1}: {i} => P')
+        print(f'REGRA {index + 1}: {i} => P') # printar a regra em questão explanando qual é a regra e como a mesma é
         
-    return lista_final_de_regras
+    return lista_final_de_regras # retornar lista_final_de_regras
 
 
 # LAUDAR OS PACIENTES COM BASE NAS REGRAS E COMPARAR COM OS DADOS DO ARQUIVO
 def laudarPacientes(lista_final_de_regras, grid_pacientes, linha_atributos, valores_dados, quantRegras):
     
-    formula_valores_pacientes = []
-    formula_valores_regras = []
+    formula_valores_pacientes = [] # lista para armazenar os valores dos pacientes
+    formula_valores_regras = [] # lista para armazenar os valores das regras
+    laudo_final = [] # lista para armazenar o laudo_final
     
-    for i in grid_pacientes:
-        formula_parcial = []
-        for index, j in enumerate(i):
-            if j == str(1):
-                formula_parcial.append(linha_atributos[index])
+    for paciente in grid_pacientes: # for para percorrer grid_pacientes
+        formula_parcial = [] # formula auxiliar
+        for index, dado_paciente in enumerate(paciente): # for para percorrer os dados do paciente
+            if dado_paciente == str(1): # se dado for igual a 1 evidenciando que ele possui o atributo equivalente a posição desse dado
+                formula_parcial.append(linha_atributos[index]) # acrescentar o atributo equivalente ao dado na formula_parcial
                 
-            else:
-                teste = linha_atributos[index].replace('<=', '>')   
-                formula_parcial.append(teste)
+            else: # se não evidenciando que o valor dado_paciente é zero e que o atributo equivalente a posição desse dado deve ser o oposto
+                atributo_alterado = linha_atributos[index].replace('<=', '>') # replace removendo a string '<=' do atributo equivalente ao dado e substituindo por '>' evidenciando o oposto do atributo
+                formula_parcial.append(atributo_alterado) # acrescentando atributo_alterado equivalente ao dado na formula_parcial
         
-        formula_valores_pacientes.append(formula_parcial)  
+        formula_valores_pacientes.append(formula_parcial) # acrescentar formula_parcial em formula_valores_pacientes
     
-    for index, pacientes in enumerate(formula_valores_pacientes):
-        teste1 = []
-        for i in lista_final_de_regras:
-            formula_teste = []
-            for j in i:
-                for atributos_pacientes in pacientes:
-                    if atributos_pacientes == j:
-                        formula_teste.append(atributos_pacientes)
+    for index, paciente in enumerate(formula_valores_pacientes): # for para percorrer formula_valores_pacientes enquanto contabiliza um index
+        formula_auxiliar = [] # formula auxiliar
+        for regras in lista_final_de_regras: # for para percorrer lista_final_de_regras
+            formula_auxiliar1 = [] # segunda formula auxiliar
+            for elemento_regra in regras: # for para percorrer os elementos das regras
+                for atributos_pacientes in paciente: # for para percorrer os atributos dos pacientes
+                    if atributos_pacientes == elemento_regra: # se atributos_pacientes for igual ao elemento da regra
+                        formula_auxiliar1.append(atributos_pacientes) # acrescentar atributos_pacientes a formula_auxiliar1
             
-            if formula_teste != i:
-                teste1.append(0)
+            if formula_auxiliar1 != regras: # se o formula_auxiliar1 for diferente de regras evidenciando que seus atributos nao sao totalmente iguais aos pedidos na regra em questão, ou seja, o paciente nao obedece a regra
+                formula_auxiliar.append(0) # acrescentar 0 em formula auxiliar
                 
-            else:
-                teste1.append(1)
+            else: # se não, entao evidencia que seus atributos sao totalmente iguais aos atributos pedidos na regra em questão, ou seja, o paciente obedece a regra
+                formula_auxiliar.append(1) # acrescentar 1 em formula auxiliar
         
-        formula_valores_regras.append(teste1)  
+        formula_valores_regras.append(formula_auxiliar) # acrescentar formula_auxiliar em formula_valores_regras
     
-    laudo_final = []  
-    for index, i in enumerate(formula_valores_regras):
-        if 1 in i: # significa que o paciente obedece alguma regra
-            laudo_final.append('1')
+    for index, valor_paciente in enumerate(formula_valores_regras): # for para percorrer formula_valores_regras
+        if 1 in valor_paciente: # significa que o paciente obedece alguma regra
+            laudo_final.append('1') # acrescentar a string 1 ao laudo_final
         
-        else:
-            laudo_final.append('0')
+        else: # significa que o paciente nao obedece esta regra
+            laudo_final.append('0') # acrescentar a string 0 ao laudo_final
                   
-    if laudo_final == valores_dados:
-        return print(f'OS PACIENTES FORAM CORRETAMENTE DIAGNOSTICADOS COM {quantRegras} REGRAS')
+    if laudo_final == valores_dados: # se a lista laudo_final for igual a lista valores_dados evidencia que os pacientes foram corretamente diagnosticados
+        return print(f'OS PACIENTES FORAM CORRETAMENTE DIAGNOSTICADOS COM {quantRegras} REGRAS') # print do resultado
 
         
-    else:
-        return print(f'OS PACIENTES NÃO FORAM CORRETAMENTE DIAGNOSTICADOS COM {quantRegras} REGRAS')
+    else: # se não os pacientes não foram corretamente diagnosticados
+        return print(f'OS PACIENTES NÃO FORAM CORRETAMENTE DIAGNOSTICADOS COM {quantRegras} REGRAS') # print do resultado
 
 
 print('SOLUÇÃO')
 start_time = time.time()
-solucao(arquivo1, quantRegras1)
+solucao('dados_pacientes/column_bin_3a_3p.csv', 2)
 end_time = time.time()
 print('Tempo de execução:', end_time - start_time)

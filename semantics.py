@@ -5,61 +5,50 @@ from functions import atoms
 # VERIFICAR O VALOR VERDADE DA FORMULA COM TAL INTERPRETAÇÃO  
 def truth_value(formula, interpretation):
     
-    if isinstance(formula, Atom): # Verificar se a fórmula é uma atomica
+    if isinstance(formula, Atom): # se a fórmula seja uma atomica
         for formulaArray in interpretation: # Percorrer o array de interpretações parciais
             if f'{formula}' == f'{formulaArray[0]}': # Se tal atomica estiver na interpretação
                 return formulaArray[1] # Retornar a sua interpretação parcial
 
-    elif isinstance(formula, Not):
-        if truth_value(formula.inner, interpretation) == True or truth_value(formula.inner, interpretation) == False:
-            return not truth_value(formula.inner, interpretation)
+    elif isinstance(formula, Not): # se a fórmula possui o operador NOT
+        if truth_value(formula.inner, interpretation) == True or truth_value(formula.inner, interpretation) == False: # Caso a formula dentro do not for True ou False
+            return not truth_value(formula.inner, interpretation) # retornar a valoração contrária
         
-    elif isinstance(formula, And):
-        if truth_value(formula.left, interpretation) == False or truth_value(formula.right, interpretation) == False:
-            return False
+    elif isinstance(formula, And): # se a fórmula possui o operador binário AND
+        if truth_value(formula.left, interpretation) == False or truth_value(formula.right, interpretation) == False: # Caso pelo menos uma das duas formulas for False
+            return False # Retornar False
         
-        else:
-            return True
+        else: # Se não
+            return True # Retornar True
   
-    elif isinstance(formula, Or):
-        if truth_value(formula.left, interpretation) == True or truth_value(formula.right, interpretation) == True:
-            return True
+    elif isinstance(formula, Or): # se a fórmula possui o operador binário OR
+        if truth_value(formula.left, interpretation) == True or truth_value(formula.right, interpretation) == True: # Caso pelo menos uma das duas formulas for True
+            return True # Retornar True
         
-        else:
-            return False
+        else: # Se não
+            return False # Retornar False
  
-    elif isinstance(formula, Implies): # Verificar se a fórmula possui o operador binário Implies
-        if truth_value(formula.left, interpretation) == False or truth_value(formula.right, interpretation) == True:
-            return True
+    elif isinstance(formula, Implies): # se a fórmula possui o operador binário Implies
+        if truth_value(formula.left, interpretation) == False or truth_value(formula.right, interpretation) == True: # Caso pelo menos a formula da esquerda for False ou a formula da direita for True
+            return True # Retornar True
         
-        else:
-            return False
+        else: # Se não
+            return False # Retornar False
 
 
 # VERIFICAR A SATISFABILIDADE DE FORMA BRUTA
 def satisfiability_brute_force(formula):
 
-    """
-    interpretation_parcial = 
-    [
-        ['X_PI <= 42.09_1_p', False], ['X_PI <= 42.09_1_n', True], ['X_PI <= 42.09_1_s', False], ['X_PI <= 42.09_2_p', False], 
-        ['X_PI <= 42.09_2_n', False], ['X_PI <= 42.09_2_s', True], ['X_PI <= 70.62_1_p', True], ['X_PI <= 70.62_1_n', False], 
-        ['X_PI <= 70.62_1_s', False], ['X_PI <= 70.62_2_p', False], ['X_PI <= 70.62_2_n', False], ['X_PI <= 70.62_2_s', True], 
-        ['X_GS <= 37.89_1_p', False], ['X_GS <= 37.89_1_n', False], ['X_GS <= 37.89_1_s', True], ['X_GS <= 37.89_2_p', False], 
-        ['X_GS <= 37.89_2_n', True], ['X_GS <= 37.89_2_s', False], ['C_1_1', False], ['C_1_2', True], ['C_2_1', True], ['C_2_2', True]
-    ]
-    """
-
     list_atoms = atoms(formula) # Lista das atomicas da formula
-    interpretation_parcial = []
-    vetorA = []
+    interpretation_parcial = [] # Interpretação parcial (caso possua)
+    lista_sem_valoracao = [] # Lista para guardar as atomicas que estao na interpretação parcial
                     
-    for interpretacao in interpretation_parcial:
-        vetorA.append(interpretacao[0])
+    for interpretacao in interpretation_parcial: # for para percorrer a interpretação parcial
+        lista_sem_valoracao.append(interpretacao[0]) # acrescentar o primeiro elemento de interpretacao a lista_sem_valoracao
     
-    list_atoms = remove_atoms(list_atoms, vetorA)
+    list_atoms = remove_atoms(list_atoms, lista_sem_valoracao) # remover as atomicas que ja possuem valoracao de list_atoms
 
-    return sat(formula, list_atoms, interpretation_parcial)
+    return sat(formula, list_atoms, interpretation_parcial) # retornar a função sat
 
 
 # VERIFICAR AS POSSIBILIDADES DE SATISFABILIDADE
@@ -97,81 +86,64 @@ def sat(formula, list_atoms, interpretation_parcial):
         
         else:
             return False # retornar False
-            
-
-"""def teste(formula, interpretation):
-    
-    if isinstance(formula, Atom):       
-        interpretation.append([str(formula), True]) 
-    
-    elif isinstance(formula, Not):
-        if isinstance(formula.inner, Atom):
-            interpretation.append([str(formula.inner), False])
-            
-        else:
-           teste(formula.inner, interpretation)
-
-    elif isinstance(formula, And) or isinstance(formula, Or) or isinstance(formula, Implies):
-        teste(formula.left, interpretation)
-        teste(formula.right, interpretation)
-    
-    return sorted(list(interpretation))"""
         
 
 # REMOVER ATOMICAS QUE JA POSSUEM INTERPRETAÇÃO PARCIAL DA LIST_ATOMS  
 def remove_atoms(list_atoms, interpretation_parcial):
     
-    lista_atoms_removidos = []
+    lista_atoms_nao_removidos = [] # lista para guardar as atomicas não removidas
     
     for linha in list_atoms: # percorrer os elementos da list_atoms
         if str(linha) not in interpretation_parcial: # se o elemento não estiver na interpretation_parcial
-            lista_atoms_removidos.append(linha) # acrescentar elemento na lista_atoms_removidos
+            lista_atoms_nao_removidos.append(linha) # acrescentar elemento na lista_atoms_nao_removidos
               
-    return lista_atoms_removidos # retornar lista_atoms_removidos
+    return lista_atoms_nao_removidos # retornar lista_atoms_removidos
 
 
+# CONVERTER FORMULAS EM ANDs UTILIZANDO DE EQUIVALENCIA LÓGICA
 def conversor(formula):
     
-    if isinstance(formula, Atom):
-        return formula
+    if isinstance(formula, Atom): # se a fórmula seja uma atomica 
+        return formula # retornar formula
     
-    elif isinstance(formula, Not):
-        if isinstance(formula.inner, Atom):
-            return formula
+    elif isinstance(formula, Not): # se a fórmula possui o operador NOT
+        if isinstance(formula.inner, Atom): # se a formula dentro da negação for um ATOM
+            return formula # retornar formula
         
-        else:
-            formula = conversor(formula.inner)
-            return formula
+        else: # se não
+            formula = conversor(formula.inner) # chamar de forma recursiva a função conversor para a formula dentro da negação
+            return formula # retornar formula
     
-    elif isinstance(formula, And):
-        formula = And(conversor(formula.left), conversor(formula.right))
+    elif isinstance(formula, And): # se a fórmula possui o operador binário AND
+        formula = And(conversor(formula.left), conversor(formula.right)) # chamar de forma recursiva a função conversor para a formula da esquerda e da direita
     
-    elif isinstance(formula, Or):
-        formula = Not(And(Not(conversor(formula.left)), Not(conversor(formula.right))))
+    elif isinstance(formula, Or): # se a fórmula possui o operador binário OR
+        formula = Not(And(Not(conversor(formula.left)), Not(conversor(formula.right)))) # chamar de forma recursiva a função conversor para a formula da esquerda e da direita evidenciando a propriedade -(A AND B) = (-A OR -B)
 
-    elif isinstance(formula, Implies):
-        formulaParcial = Or(Not(conversor(formula.left)), conversor(formula.right))
-        formula = conversor(formulaParcial)
+    elif isinstance(formula, Implies): # se a fórmula possui o operador binário Implies
+        formula_parcial = Or(Not(conversor(formula.left)), conversor(formula.right)) # chamar de forma recursiva a função conversor para a formula da esquerda e da direita evidenciando a propriedade (A -> B) = (-A OR B)
+        formula = conversor(formula_parcial) # # chamar de forma recursiva a função conversor para a formula_parcial evidenciando a propriedade -(A AND B) = (-A OR -B)
     
-    return formula
+    return formula # retornar formula
 
 
+# SIMPLIFICADOR DE NOT
 def simplificador_de_not(formula):
     
-    if isinstance(formula, Atom):
-        return formula
+    if isinstance(formula, Atom): # se a fórmula seja uma atomica 
+        return formula # retornar fórmula
     
-    elif isinstance(formula, Not):
-        if isinstance(formula.inner, Not):
-            formula = simplificador_de_not(formula.inner.inner)
-            return formula
+    elif isinstance(formula, Not): # se a fórmula possui o operador NOT
+        if isinstance(formula.inner, Not): # se a formula dentro da negação for outra negação
+            formula = simplificador_de_not(formula.inner.inner) # chamar de forma recursiva a função simplificador_de_not da formula dentro da negação
+            return formula # retornar fórmula
         
         else:
-            formula = Not(simplificador_de_not(formula.inner))
-            return formula
+            formula = Not(simplificador_de_not(formula.inner)) # chamar de forma recursiva a negação da função simplificador_de_not da formula dentro da negação
+            return formula # retornar fórmula
     
-    elif isinstance(formula, And) or isinstance(formula, Or) or isinstance(formula, Implies):
-        formula.left = simplificador_de_not(formula.left)
-        formula.right = simplificador_de_not(formula.right)
+    elif isinstance(formula, And) or isinstance(formula, Or) or isinstance(formula, Implies): # Se a formula possuir qualquer operador binário
+        formula.left = simplificador_de_not(formula.left) # chamar de forma recursiva a função simplificador_de_not para a formula da esquerda
+        formula.right = simplificador_de_not(formula.right) # chamar de forma recursiva a função simplificador_de_not para a formula da direita
         
-    return formula
+    return formula # retornar fórmula

@@ -1,15 +1,3 @@
-"""This module is designed to define formulas in propositional logic.
-For example, the following piece of code creates an object representing (p v s).
-
-formula1 = Or(Atom('p'), Atom('s'))
-
-
-As another example, the piece of code below creates an object that represents (p → (p v s)).
-
-formula2 = Implies(Atom('p'), Or(Atom('p'), Atom('s')))
-"""
-
-
 class Formula:
     def __init__(self):
         pass
