@@ -125,4 +125,10 @@ COMMIT DIA - 28/11/2021
 - Implementação da função satisfiability_brute_force(formula) na pasta semantics.py
 - Implementação da função sat(formula, list_atoms, interpretation_parcial) na pasta semantics.py
 - Implementação da função de remove_atoms(list_atoms, interpretation_parcial) na pasta semantics.py
+
+COMMID DIA 29/11/2021
+- Implementação da função laudarPacientes(lista_final_de_regras, grid_pacientes, linha_atributos, valores_dados, quantRegras) na pasta projeto1.py
+- Implementação de uma função propria para criar as regras chamada de criar_regras(lista_parcial, quantRegras) na pasta projeto1.py
+- Alterações no README baseado na alterações
+- Exclusão da pasta main (pois estava sem utilidade)
 """
