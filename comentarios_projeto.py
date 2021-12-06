@@ -136,4 +136,11 @@ COMMIT DIA 29/11/2021
 COMMIT DIA 04/12/2021
 - Alterações e melhorias em algumas funções como: restrições 1, 2, 3, 4 e 5, solucao e laudarPacientes
 - Adição de comentários adicionais
+
+COMMIT DIA 05/12/2021
+- Correções no processo de criação de regras
+- Implementação na função laudar pacientes para a mesma indicar quais regras cada pacientes respeita
+- Melhorias nas exposições das informações
+- Melhorias na função restrição 1
+- Criação de condição de parada caso a quantidade de regras seja inválida
 """
