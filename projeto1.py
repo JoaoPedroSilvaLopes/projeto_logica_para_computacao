@@ -1,7 +1,7 @@
 import csv
+import time
 from semantics import *
 from functions import *
-import time
 from copy import deepcopy
 
 
@@ -41,7 +41,7 @@ def criarTabelaPacientes(arquivo):
     
         return vetor # retornar vetor
 
-    
+
 # RESTRIÇÃO 1
 def restricao1(grid, quantRegras):
     """[summary]
@@ -55,30 +55,16 @@ def restricao1(grid, quantRegras):
     formula_restricao1 = [] # formula para a restrição 1
     gridCopia.pop() # remover o ultimo elemento do grid
     
-    for j in gridCopia: # for para percorrer as colunas da primeira linha do grid
-        for i in range(quantRegras): # for para percorrer a quantidade de regras
-            lista_and = [] # setar lista como vazio
+    for linhaGrid in gridCopia: # for para percorrer as colunas da primeira linha do grid
+        for regra in range(quantRegras): # for para percorrer a quantidade de regras
             lista_parcial = [] # lista parcial que serve como auxiliar na construção da formula
-            
-            lista_and.append(Atom('X_' + str(j) + '_' + str(i + 1) + '_p')) # atomica Xa,i,p
-            lista_and.append(Not(Atom('X_' + str(j) + '_' + str(i + 1) + '_n'))) # atomica -Xa,i,n
-            lista_and.append(Not(Atom('X_' + str(j) + '_' + str(i + 1) + '_s'))) # atomica -Xa,i,s
-            
-            lista_parcial.append(andzao(lista_and)) # adicionar lista_and em um andzao e adicionar o resultado na lista_parcial
-            lista_and.clear() # limpar a lista de AND
-            
-            lista_and.append(Not(Atom('X_' + str(j) + '_' + str(i + 1) + '_p'))) # atomica -Xa,i,p
-            lista_and.append(Atom('X_' + str(j) + '_' + str(i + 1) + '_n')) # atomica Xa,i,n
-            lista_and.append(Not(Atom('X_' + str(j) + '_' + str(i + 1) + '_s'))) # atomica -Xa,i,s
-            
-            lista_parcial.append(andzao(lista_and)) # adicionar lista_and em um andzao e adicionar o resultado na lista_parcial
-            lista_and.clear() # limpar a lista de AND
-
-            lista_and.append(Not(Atom('X_' + str(j) + '_' + str(i + 1) + '_p'))) # atomica -Xa,i,p
-            lista_and.append(Not(Atom('X_' + str(j) + '_' + str(i + 1) + '_n'))) # atomica -Xa,i,n
-            lista_and.append(Atom('X_' + str(j) + '_' + str(i + 1) + '_s')) # atomica Xa,i,s
-
-            lista_parcial.append(andzao(lista_and)) # adicionar lista_and em um andzao e adicionar o resultado na lista_parcial
+            for posicao in range(3):
+                lista_and = [] # setar lista como vazio
+                lista_possibilidades = ['p', 'n', 's'] # lista com todas as possibilidades de atomicas seja p, n ou s
+                for possibilidade in lista_possibilidades: # for para percorrer a lista_possibilidades
+                    lista_and.append(Not(Atom('X_' + str(linhaGrid) + '_' + str(regra + 1) + '_' + str(possibilidade)))) # atomica Xa,i,(p ou n ou s)
+                lista_and[posicao] = lista_and[posicao].inner # lista_and recebe a atomica que esta na posicao so que sem a negação
+                lista_parcial.append(andzao(lista_and)) # adicionar lista_and em um andzao e adicionar o resultado na lista_parcial
             formula_restricao1.append(orzao(lista_parcial)) # adicionar a lista_parcial em um orzao e adicionar o resulta na formula_restrição1
         
     return andzao(formula_restricao1) # juntar todas as formulas de ORs em um ANDzao
@@ -206,11 +192,15 @@ def restricao5(grid, quantRegras):
 # SOLUÇÃO
 def solucao(arquivo, quantRegras):
     
+    if (quantRegras <= 0):
+        return print('QUANTIDADE DE REGRAS INVÁLIDA\n') # printar quantidade de regras inválida
+    
     grid = criarTabelaPacientes(arquivo)
 
     formula_final = And(And(And(restricao1(grid[0], quantRegras), restricao2(grid[0], quantRegras)), And(restricao3(grid, quantRegras), restricao4(grid, quantRegras))), restricao5(grid, quantRegras)) # formula final é o and de todas as restrições
     resultado = satisfiability_brute_force(formula_final) # atribuir ao resultado o resultado de satisfiability_brute_force(formula_final)
     
+    regras_pacientes = [] # lista para guardar as regras respeitadas nas devidas posições dos pacientes
     lista_parcialX = [] # lista para guardar as atomicas que começam com X
     lista_parcialC = [] # lista para guardar as atomicas que começam com C
     lista_dados = [] # lista para guardar os diagnosticos dos pacientes provenientes dos dados do arquivo
@@ -231,11 +221,15 @@ def solucao(arquivo, quantRegras):
                     lista_parcialX.append(lista_segregada) # acrescentar lista_segredada à lista_parcial
                     
             else: # Caso a atomica comece com C
-                lista_segregada.pop(0) # remover primeiro elemento no caso 'C'
-                lista_parcialC.append(lista_segregada.pop(0)) # remover elemento que se refere as regras e acrescenta-lo a lista_parcialC
+                lista_pacientes_regras = deepcopy(lista_segregada)
+                
+                lista_pacientes_regras.pop(0) # remover o elemento C da lista_pacientes_regras
+                regras_pacientes.append(lista_pacientes_regras) # acrescentar lista_pacientes_regras em regras_pacientes
+                
+                lista_parcialC.append(lista_segregada.pop(-1)) # acrescentar o ultimo elemento da lista_segregada e adicionar em lista_parcialC
     
     else: # caso seja Falso
-        return print('Resultado insatisfatível') # printar que é insatisfativel
+        return print('NÃO EXISTE RESULTADO COM VALORAÇÃO POSITIVA PARA ESSA QUANTIDADE DE REGRAS\n') # printar que é insatisfativel
                     
     criar_regras(lista_parcialX, quantRegras) # regras recebe a lista_final_de_regras provenientes da função criar_regras
     
@@ -243,7 +237,7 @@ def solucao(arquivo, quantRegras):
         quantPacientes = index # remover o ultimo elemento de grid_pacientes
         lista_dados.append(i.pop()) # pegar somente o ultimo elemento
         
-    return laudarPacientes(lista_parcialC, lista_dados, quantPacientes, quantRegras) # retornar o laudo dos pacientes
+    return laudarPacientes(lista_parcialC, lista_dados, quantPacientes, regras_pacientes, quantRegras) # retornar o laudo dos pacientes
 
 
 # CRIAR REGRAS
@@ -261,29 +255,44 @@ def criar_regras(lista_parcial, quantRegras):
         lista_final_de_regras.append(lista_parcial_de_regras) # acrescentar a lista_parcial_de_regras à lista_final_de_regras
             
     for index, i in enumerate(lista_final_de_regras): # percorrer lista_final_de_regras para criar a mensagem das regras
-        print(f'REGRA {index + 1}: {i} => P') # printar a regra em questão explanando qual é a regra e como a mesma é
-        
+        print(f'REGRA {index + 1}: {str(i)[1:-1]} => P') # printar a regra em questão explanando qual é a regra e como a mesma é
+    
+    print('')
     return lista_final_de_regras # retornar lista_final_de_regras
 
 
 # LAUDAR OS PACIENTES COM BASE NAS REGRAS E COMPARAR COM OS DADOS DO ARQUIVO
-def laudarPacientes(lista_parcialC, lista_dados, quantPacientes, quantRegras):
+def laudarPacientes(lista_parcialC, lista_dados, quantPacientes, regras_pacientes, quantRegras):
     
+    regras_respeitadas = [] # lista com as regras respeitadas nas devidas posições dos pacientes
     laudo_final = ['0'] * quantPacientes # criar somente com elementos sendo 0 do tamanho da quantidade de pacientes
     lista_dados.pop(0) # remover o primeiro elemento da lista_dados
-        
+    
     for i in sorted(set(lista_parcialC)): # for para percorrer a lista_parcialC ordenada
         laudo_final[int(i) - 1] = '1' # substituir o valor do elemento da posição do laudo_final por 1 evidenciando que nessa posição o paciente é diagnosticado com patologia
+    
+    for i in sorted(set(lista_parcialC)): # for para percorrer lista_parcialC ordenada
+        lista_auxiliar = []
+        for j in regras_pacientes: # for para percorrer regras_pacientes
+            if j[1] == i: # se o ultimo elemento de j for igual a i
+                lista_auxiliar.append(j[0]) # acrescentar o primeiro elemento de j em lista_auxiliar
+                
+        regras_respeitadas.append(lista_auxiliar) # acrescentar lista_auxiliar em regras_respeitadas
         
     if laudo_final == lista_dados: # se a lista laudo_final for igual a lista valores_dados evidencia que os pacientes foram corretamente diagnosticados
-        return print(f'OS PACIENTES FORAM CORRETAMENTE DIAGNOSTICADOS COM {quantRegras} REGRAS') # print do resultado
+        for index, i in enumerate(laudo_final): # for para percorrer o laudo_final
+            if (i == '1'): # se i == 1 evidenciando que tal paciente nessa posição possui patologia
+                print(f'PACIENTE {index + 1} RESPEITA A(S) REGRA(S): {str(regras_respeitadas[index])[1:-1]}')
+                
+        print('')
+        return print(f'OS PACIENTES FORAM CORRETAMENTE DIAGNOSTICADOS COM {quantRegras} REGRA(S)\n') # print do resultado
     
     else: # se não os pacientes não foram corretamente diagnosticados
-        return print(f'OS PACIENTES NÃO FORAM CORRETAMENTE DIAGNOSTICADOS COM {quantRegras} REGRAS') # print do resultado
+        return print(f'OS PACIENTES NÃO FORAM CORRETAMENTE DIAGNOSTICADOS COM {quantRegras} REGRA(S)\n') # print do resultado
 
 
-print('SOLUÇÃO')
+print('\n=========================== SOLUÇÃO ===========================\n')
 start_time = time.time()
-solucao('dados_pacientes/column_bin_3a_3p.csv', 2)
+solucao('dados_pacientes/column_bin_3a_6p.csv', 2)
 end_time = time.time()
-print('Tempo de execução:', end_time - start_time)
+print('TEMPO DE EXECUÇÃO:', end_time - start_time ,'\n')
