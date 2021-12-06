@@ -53,7 +53,7 @@ def satisfiability_brute_force(formula):
 
 # VERIFICAR AS POSSIBILIDADES DE SATISFABILIDADE
 def sat(formula, list_atoms, interpretation_parcial):
-
+    
     copia_list_atoms = list_atoms.copy() # copia da list atoms para ser alterada na chamada recursiva
     
     if list_atoms == []: # se list_atoms é um conjunto vazio
