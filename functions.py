@@ -99,11 +99,10 @@ def number_of_connectives(formula):
 # VERIFICAR SE A FORMULA É UM LITERAL
 def is_literal(formula):
     
-    if isinstance(formula, Atom) or (isinstance(formula, Not) and isinstance(formula.inner, Atom)): # Se a formula for uma atomica ou se a formula for uma negação de uma atomica
+    if isinstance(formula, Atom) or isinstance(formula, Not) and isinstance(formula.inner, Atom): # Se a formula for uma atomica ou se a formula for uma negação de uma atomica
         return True
     
-    else: # Se não for nenhuma das condições acima
-        return False
+    return False
 
 
 # REALIZAR UMA SUBSTITUIÇÃO NA FORMULA
