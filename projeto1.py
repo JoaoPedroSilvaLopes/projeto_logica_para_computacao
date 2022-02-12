@@ -135,6 +135,6 @@ def solucao(arquivo, numeroDeRegras):
 
 print('\n=========================== SOLUÇÃO ===========================\n')
 start_time = time.time()
-solucao(criarTabelaPacientes('dados_pacientes/column_bin_3a_3p.csv'), 3)
+solucao(criarTabelaPacientes('dados_pacientes/column_bin_3a_2p.csv'), 1)
 end_time = time.time()
 print('\nTEMPO DE EXECUÇÃO:', end_time - start_time ,'\n')

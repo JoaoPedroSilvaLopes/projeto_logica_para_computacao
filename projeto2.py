@@ -157,7 +157,7 @@ formulaCompleta = []
 
 print('\n=========================== SOLUÇÃO ===========================\n')
 start_time = time.time()
-solucao(criarTabelaPacientes('dados_pacientes/column_bin_36a_155p.csv'), 5)
+solucao(criarTabelaPacientes('dados_pacientes/column_bin_3a_2p.csv'), 1)
 end_time = time.time()
 print('\nTEMPO DE EXECUÇÃO:', end_time - start_time ,'\n')
 
