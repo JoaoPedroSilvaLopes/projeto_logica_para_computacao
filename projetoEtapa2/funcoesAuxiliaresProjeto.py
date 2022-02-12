@@ -1,5 +1,6 @@
 from functions import *
 
+
 def transformarEmDisjuncao(ListaDeFormulas):
     
     primeiraFormula = ListaDeFormulas[0]
@@ -38,7 +39,7 @@ def filtrarDadosPacientes(grid, filtro):
 
 
 def inverterValores(atomicaSplitada):
-    
+
     atomicaSplitada[0] = atomicaSplitada[0].replace('<=', '>')
     return atomicaSplitada
 
@@ -48,13 +49,16 @@ def organizarResultados(resultado):
     atomicasIniciadasEmX = []
     atomicasIniciadasEmC = []
     
-    for atomica in resultado:
+    for atomica in sorted(resultado):
         atomicaSplitada = atomica.split('_')
             
-        if atomicaSplitada.pop(0) == 'X':
+        if atomicaSplitada[0] == 'X' and atomicaSplitada[-1] != 's':
+            atomicaSplitada.pop(0)
             atomicasIniciadasEmX.append(atomicaSplitada) if atomicaSplitada.pop() == 'p' else atomicasIniciadasEmX.append(inverterValores(atomicaSplitada))
-   
-        else:
+
+        
+        elif atomicaSplitada[0] == 'C':
+            atomicaSplitada.pop(0)
             atomicasIniciadasEmC.append(atomicaSplitada)
                 
     return atomicasIniciadasEmX, atomicasIniciadasEmC
@@ -71,7 +75,7 @@ def gerarRegras(dadosAtomicasIniciadasEmX, numeroDeRegras):
                 
         conjuntoDeRegras.append(listaAuxiliar)
             
-    for index, regra in enumerate(conjuntoDeRegras):
+    for index, regra in enumerate(sorted(conjuntoDeRegras)):
         print(f'REGRA {index + 1}: {str(regra)[1:-1]} => P')
 
     print('')
@@ -92,3 +96,14 @@ def laudarPacientes(dadosAtomicasIniciadasEmC):
                 listaAuxiliar.append(dado[1])
                 
         print(f'REGRA {regra} SE APLICA AO(S) PACIENTE(S): {str(sorted(listaAuxiliar))[1:-1]}')
+
+       
+def removerNegacoes(resultado):
+    
+    resultadoFinal = []
+    for elemento in resultado:
+        if elemento > 0:
+            resultadoFinal.append(elemento)
+            
+    return resultadoFinal
+

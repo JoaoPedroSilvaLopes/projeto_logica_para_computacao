@@ -1,19 +1,18 @@
 from copy import deepcopy
 from formula import *
 
-
 def DPLL(formulaCNF):
-
+    
     return DPLLCheck(formulaCNF, interpretacao = [])
 
-    
+
 def DPLLCheck(formulaCNF, interpretacao):
     
     copiaCNF = deepcopy(formulaCNF)
     copiaCNF, interpretacao = propagacaoDeUnidade(copiaCNF, interpretacao)
     
     if copiaCNF == []:
-        return pegarAtomicasVerdadeiras(interpretacao)
+        return sorted(interpretacao)
     
     elif [] in copiaCNF:
         return False
@@ -21,7 +20,7 @@ def DPLLCheck(formulaCNF, interpretacao):
     atomica = pegarAtomica(copiaCNF)
     
     S1 = copiaCNF + [[atomica]]
-    S2 = copiaCNF + [[Not(atomica)]]
+    S2 = copiaCNF + [[atomica * -1]]
     
     resultado = DPLLCheck(S1, interpretacao)
     
@@ -45,18 +44,18 @@ def propagacaoDeUnidade(formulaCNF, interpretacao):
 
 
 def pegarAtomica(formulaCNF):
-
+    
     listaAtomicas = []
-            
+    
     for clausula in formulaCNF:
         for literal in clausula:
-            if isinstance(literal, Atom):
+            if literal > 0:
                 listaAtomicas.append(literal)
-                
+    
     if list(set(listaAtomicas)) != []:
         return listaAtomicas.pop()
-    
-    return
+        
+    return         
 
 
 def existeClausulaUnitaria(formulaCNF):
@@ -95,26 +94,15 @@ def removerClausulasComLiteral(formulaCNF, literal):
 
 
 def removerComplementoDoLiteral(formulaCNF, literal):
-
-    if isinstance(literal, Atom):
+    
+    if literal > 0:
         for clausula in formulaCNF:
-            if Not(literal) in clausula:
-                clausula = clausula.remove(Not(literal))
-        
-    elif isinstance(literal, Not):
+            if (literal * -1) in clausula:
+                clausula = clausula.remove(literal * -1)
+                
+    elif literal < 0:
         for clausula in formulaCNF:
-            if literal.inner in clausula:
-                clausula = clausula.remove(literal.inner)
+            if (literal * -1) in clausula:
+                clausula = clausula.remove(literal * -1)
                     
     return formulaCNF
-
-
-def pegarAtomicasVerdadeiras(interpretacao):
-    
-    listaDeAtomicasVerdadeiras = []
-    
-    for valoracaoLiteral in interpretacao:
-        listaDeAtomicasVerdadeiras.append(f'{valoracaoLiteral}') if not isinstance(valoracaoLiteral, Not) and str(valoracaoLiteral).split('_')[-1][0] != 's' else listaDeAtomicasVerdadeiras
-        
-    return listaDeAtomicasVerdadeiras
-

@@ -72,6 +72,17 @@ corretamente todos os indivíduos do arquivo. Cada paciente deve receber um diag
 baseado na utilização das regras. Após isso, deve-se verificar se o diagnóstico bate com
 o diagnóstico do arquivo.
 
+
+
+ ______   _______   ______   _________   _______   __________   _______      ____
+|      | |       | |      | |___   ___| |   ____| |___    ___| |       |    /    |
+|      | |       | |      |     |  |    |  |___       |  |     |       |   |__|  |
+|  ____/ |  __  /  |      |     |  |    |   ___|      |  |     |       |      |  |
+|  |     |  | |  | |      |  ___|  |    |  |____      |  |     |       |   ___|  |___ 
+|__|     |__| |__| |______| |______|    |_______|     |__|     |_______|  |__________|
+
+
+
 ------------------------ALTERAÇÕES DO REPOSITÓRIO SEMANA 01-------------------------------
 
 COMMIT DIA - 11/11/2021
@@ -120,4 +131,22 @@ COMMIT DIA 05/12/2021
 - Melhorias nas exposições das informações
 - Melhorias na função restrição 1
 - Criação de condição de parada caso a quantidade de regras seja inválida
+'''
+
+'''
+ ______   _______   ______   _________   _______   __________   _______     _______
+|      | |       | |      | |___   ___| |   ____| |___    ___| |       |   /  __   |
+|      | |       | |      |     |  |    |  |___       |  |     |       |  |__|/   /
+|  ____/ |  __  /  |      |     |  |    |   ___|      |  |     |       |     /   /
+|  |     |  | |  | |      |  ___|  |    |  |____      |  |     |       |    /   /___
+|__|     |__| |__| |______| |______|    |_______|     |__|     |_______|   |________|
+
+
+COMMIT DIA 12/02/2022
+- Finalização do projeto
+- Organização de pastas
+- Teste com arquivos concluidos
+- Melhorias na clareza do codigo
+- Implementação da uma função de criar uma pasta com os dados em formato DIMACS
+- Implementação de um filtro que diferencia um arquivo de pacientes ou um arquivo DIMACS fornecido pelo professor
 '''
